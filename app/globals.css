@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #08090c;
+  --foreground: #f4f4f6;
+  
+  --aero-bg: #08090c;
+  --aero-panel: #111318;
+  --aero-panel-soft: #15181e;
+  --aero-border: #343843;
+  --aero-muted: #9699a6;
+  --aero-text: #f4f4f6;
+  --aero-accent: #4fb8b2;
+  --aero-accent-strong: #8df4eb;
+  --aero-pink: #ff4f9a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-hero: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--aero-bg);
+  color: var(--aero-text);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 20% 0%, rgba(79, 184, 178, 0.16), transparent 34rem),
+    radial-gradient(circle at 80% 10%, rgba(255, 79, 154, 0.08), transparent 30rem),
+    var(--aero-bg);
+  background-size: 72px 72px, 72px 72px, auto, auto, auto;
+  font-family: var(--font-sans);
+  color: var(--aero-text);
+  background-attachment: fixed;
+}
+
+/* Aeroplane Utilities */
+@layer utilities {
+  .aero-panel {
+    border: 1px solid var(--aero-border);
+    background: rgba(17, 19, 24, 0.78);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(12px);
+  }
+  
+  .aero-panel-solid {
+    border: 1px solid var(--aero-border);
+    background: var(--aero-panel);
+  }
+
+  .aero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid rgba(141, 244, 235, 0.5);
+    background: rgba(79, 184, 178, 0.16);
+    color: var(--aero-accent-strong);
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+
+  .aero-button:hover:not(:disabled) {
+    background: rgba(79, 184, 178, 0.25);
+    box-shadow: 0 0 15px rgba(79, 184, 178, 0.3);
+  }
+
+  .aero-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .aero-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--aero-border);
+    background: rgba(17, 19, 24, 0.72);
+    color: var(--aero-text);
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  
+  .aero-button-secondary:hover:not(:disabled) {
+    background: rgba(25, 29, 36, 0.9);
+    border-color: var(--aero-muted);
+  }
+
+  .aero-input {
+    width: 100%;
+    background: var(--aero-bg);
+    border: 1px solid var(--aero-border);
+    color: var(--aero-text);
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .aero-input:focus {
+    border-color: var(--aero-accent);
+  }
 }
