@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield,
@@ -338,69 +338,104 @@ export default function Landing() {
   const [showLogin, setShowLogin]       = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Nav */}
-      <header className="sticky top-0 z-40 border-b border-[var(--cs-border)] bg-[var(--cs-bg)]/90 backdrop-blur-sm">
-        <div className="cs-container flex justify-between items-center py-4">
-          <div className="flex items-center gap-2.5">
-            <Shield className="w-6 h-6 text-[var(--cs-teal)]" />
+      {/* ── Nav ─────────────────────────────────────────── */}
+      <header className={`sticky top-0 z-40 relative transition-all duration-300 ${
+        scrolled
+          ? 'bg-[var(--cs-bg)]/90 backdrop-blur-md'
+          : 'bg-transparent'
+      }`}>
+        <div className="cs-container flex justify-between items-center py-5">
+
+          {/* Logo — icon in bordered box + wordmark */}
+          <a href="/" className="flex items-center gap-3 font-bold">
+            <span className="grid place-items-center w-9 h-9 border border-[var(--cs-border)] bg-[var(--cs-teal)]/10 shrink-0">
+              <Shield className="w-4 h-4 text-[var(--cs-teal)]" />
+            </span>
             <span
-              className="font-bold tracking-widest text-base text-[var(--cs-text)]"
+              className="text-sm font-bold tracking-widest text-[var(--cs-text)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               CAMPUS SHIELD
             </span>
-          </div>
+          </a>
 
-          <nav className="hidden sm:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[var(--cs-muted)]">
-            <a href="#features" className="hover:text-[var(--cs-teal)] transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-[var(--cs-teal)] transition-colors">How it works</a>
+          {/* Desktop nav links */}
+          <nav className="hidden sm:flex items-center gap-8 text-sm text-[var(--cs-muted)]">
+            <a href="#features" className="hover:text-[var(--cs-text)] transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-[var(--cs-text)] transition-colors">How it works</a>
           </nav>
 
+          {/* Desktop CTA buttons */}
           <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={() => setShowLogin(true)}
-              className="cs-btn-ghost text-xs py-0 px-4 min-h-9"
+              className="cs-btn-ghost text-xs px-4 min-h-9 py-0"
             >
               Log In
             </button>
             <button
               onClick={() => setShowRegister(true)}
-              className="cs-btn-primary text-xs py-0 px-4 min-h-9"
+              className="cs-btn-primary text-xs px-4 min-h-9 py-0"
             >
               Register
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile hamburger */}
           <button
-            className="sm:hidden text-[var(--cs-text)] p-2"
+            className="sm:hidden text-[var(--cs-muted)] hover:text-[var(--cs-text)] p-1 transition-colors"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label="Toggle menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Separator — only visible once scrolled */}
+        <div className={`border-b border-[var(--cs-border)] transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
+
+        {/* Mobile dropdown — absolutely positioned so it overlays the page */}
         {showMobileMenu && (
-          <div className="sm:hidden absolute top-full left-0 w-full border-t border-b border-[var(--cs-border)] bg-[var(--cs-bg)]/95 backdrop-blur-md p-4 flex flex-col gap-4 text-xs font-bold uppercase tracking-widest shadow-2xl">
-            <a href="#features" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">Features</a>
-            <a href="#how-it-works" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">How it works</a>
-            <div className="flex flex-col gap-3 mt-2 border-t border-[var(--cs-border)] pt-4">
-              <button
-                onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
-                className="cs-btn-ghost w-full min-h-10"
+          <div className="sm:hidden absolute top-full left-0 w-full bg-[var(--cs-bg)]/98 backdrop-blur-md border-b border-[var(--cs-border)] shadow-2xl">
+            <div className="cs-container py-4 flex flex-col gap-1">
+              <a
+                href="#features"
+                onClick={() => setShowMobileMenu(false)}
+                className="text-sm text-[var(--cs-muted)] hover:text-[var(--cs-text)] py-2.5 border-b border-[var(--cs-border)] transition-colors"
               >
-                Log In
-              </button>
-              <button
-                onClick={() => { setShowRegister(true); setShowMobileMenu(false); }}
-                className="cs-btn-primary w-full min-h-10"
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={() => setShowMobileMenu(false)}
+                className="text-sm text-[var(--cs-muted)] hover:text-[var(--cs-text)] py-2.5 border-b border-[var(--cs-border)] transition-colors"
               >
-                Register
-              </button>
+                How it works
+              </a>
+              <div className="flex flex-col gap-3 pt-4">
+                <button
+                  onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
+                  className="cs-btn-ghost w-full"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => { setShowRegister(true); setShowMobileMenu(false); }}
+                  className="cs-btn-primary w-full"
+                >
+                  Register
+                </button>
+              </div>
             </div>
           </div>
         )}
