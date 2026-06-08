@@ -2,7 +2,15 @@
 
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Shield, AlertTriangle, Map, Bell, LogOut, ShieldAlert } from 'lucide-react';
+import {
+  Shield,
+  AlertTriangle,
+  Map,
+  Bell,
+  LogOut,
+  ShieldAlert,
+} from 'lucide-react';
+
 import ReportTab from './dashboard/ReportTab';
 import DiscoverTab from './dashboard/DiscoverTab';
 import IncidentTab from './dashboard/IncidentTab';
@@ -16,85 +24,85 @@ export default function Dashboard() {
   const isAdminOrGuard = role === 'admin' || role === 'guard';
 
   const tabs = [
-    { id: 'report',   label: 'SOS',      Icon: AlertTriangle },
-    { id: 'incident', label: 'Report Nearby', Icon: ShieldAlert },
-    { id: 'discover', label: 'Feed',     Icon: Map },
-    ...(isAdminOrGuard ? [{ id: 'warn', label: 'Broadcast', Icon: Bell }] : []),
+    { id: 'report', label: 'SOS', Icon: AlertTriangle },
+    { id: 'incident', label: 'Nearby', Icon: ShieldAlert },
+    { id: 'discover', label: 'Feed', Icon: Map },
+    ...(isAdminOrGuard
+      ? [{ id: 'warn', label: 'Broadcast', Icon: Bell }]
+      : []),
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
 
-      {/* ── Header ─────────────────────────────────────── */}
-      <header className="sticky top-0 z-40">
-        <div className="cs-container flex justify-between items-center py-5">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-[var(--cs-border)] bg-[var(--cs-bg)]/90 backdrop-blur-md">
+        <div className="cs-container flex items-center justify-between py-3">
 
-          {/* Logo — icon in bordered box + wordmark */}
-          <div className="flex items-center gap-3 font-bold">
-            <span className="grid place-items-center w-9 h-9 border border-[var(--cs-border)] bg-[var(--cs-teal)]/10 shrink-0">
-              <Shield className="w-4 h-4 text-[var(--cs-teal)]" />
-            </span>
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-[var(--cs-teal)]" />
+
             <span
-              className="text-sm font-bold tracking-widest text-[var(--cs-text)]"
+              className="text-sm font-bold tracking-wide text-[var(--cs-text)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               CAMPUS SHIELD
             </span>
           </div>
 
-          {/* Right — user badge + logout */}
-          <div className="flex items-center gap-5">
-            <div className="hidden sm:flex flex-col items-end leading-none gap-1">
-              <span className="text-xs font-bold text-[var(--cs-text)] truncate max-w-[140px]">
-                {session?.user?.name}
-              </span>
-              <span className="text-[10px] uppercase tracking-widest text-[var(--cs-teal)] font-mono">
-                {role}
-              </span>
-            </div>
+          {/* User */}
+          <div className="flex items-center gap-3">
 
-            <div className="w-px h-6 bg-[var(--cs-border)] hidden sm:block" />
+            <div className="hidden sm:block text-right leading-tight">
+              <p className="text-xs font-medium text-[var(--cs-text)]">
+                {session?.user?.name}
+              </p>
+
+              <p className="text-[10px] text-[var(--cs-muted)] uppercase">
+                {role}
+              </p>
+            </div>
 
             <button
               onClick={() => signOut()}
-              className="flex items-center gap-2 text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors text-xs font-bold uppercase tracking-widest"
+              className="text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* ── Content ────────────────────────────────────── */}
-      <main className="flex-1 cs-container py-8 pb-28">
-        {activeTab === 'report'   && <ReportTab />}
+      {/* Content */}
+      <main className="flex-1 cs-container py-6 pb-24">
+        {activeTab === 'report' && <ReportTab />}
         {activeTab === 'incident' && <IncidentTab />}
         {activeTab === 'discover' && <DiscoverTab />}
         {activeTab === 'warn' && isAdminOrGuard && <WarnTab />}
       </main>
 
-      {/* ── Bottom Tab Nav ─────────────────────────────── */}
-      <nav className="fixed bottom-0 w-full bg-[var(--cs-bg)]/95 backdrop-blur-md border-t border-[var(--cs-border)] z-40">
-        <div className="max-w-lg mx-auto flex items-stretch px-4">
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 border-t border-[var(--cs-border)] bg-[var(--cs-bg)]/95 backdrop-blur-md z-40">
+        <div className="max-w-lg mx-auto flex">
           {tabs.map(({ id, label, Icon }) => {
             const active = activeTab === id;
+
             return (
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`relative flex-1 flex flex-col items-center justify-center gap-1.5 py-3.5 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors ${
+                className={`flex-1 flex flex-col items-center gap-1 py-2.5 transition-colors ${
                   active
                     ? 'text-[var(--cs-teal-bright)]'
-                    : 'text-[var(--cs-muted)] hover:text-[var(--cs-text)]'
+                    : 'text-[var(--cs-muted)]'
                 }`}
               >
-                {/* Active indicator — top line */}
-                {active && (
-                  <span className="absolute top-0 left-4 right-4 h-px bg-[var(--cs-teal)]" />
-                )}
-                <Icon className="w-5 h-5" />
-                <span>{label}</span>
+                <Icon className="w-4 h-4" />
+
+                <span className="text-[10px] font-medium">
+                  {label}
+                </span>
               </button>
             );
           })}
