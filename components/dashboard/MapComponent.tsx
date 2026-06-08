@@ -18,23 +18,32 @@ export default function MapComponent({ alerts = [] }: { alerts: any[] }) {
   const [positions, setPositions] = useState<Record<string, [number, number]>>({});
 
   useEffect(() => {
-    // Start SSE connections for each active alert to get live location
-    const eventSources: EventSource[] = [];
+    if (alerts.length === 0) return;
 
-    alerts.forEach(alert => {
-      // Use trackToken for tracking
-      const es = new EventSource(`/api/location/stream?alertId=${alert.trackToken || alert._id}`);
-      es.onmessage = e => {
-        try {
-          const { lat, lng } = JSON.parse(e.data);
-          setPositions(prev => ({ ...prev, [alert._id]: [lat, lng] }));
-        } catch (err) {}
-      };
-      eventSources.push(es);
-    });
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      alerts.forEach(alert => {
+        const token = alert.trackToken || alert._id;
+        ws.send(JSON.stringify({ type: 'subscribe', channel: `location:${token}` }));
+      });
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'location_update' && data.trackToken) {
+          const matchedAlert = alerts.find(a => a.trackToken === data.trackToken || a._id === data.trackToken);
+          if (matchedAlert) {
+            setPositions(prev => ({ ...prev, [matchedAlert._id]: [data.lat, data.lng] }));
+          }
+        }
+      } catch (err) {}
+    };
 
     return () => {
-      eventSources.forEach(es => es.close());
+      ws.close();
     };
   }, [alerts]);
 

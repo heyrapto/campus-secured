@@ -99,11 +99,73 @@ app.post('/notify-contacts', async (req, res) => {
   res.json({ ok: true });
 });
 
+// WebSocket Integration
+const http = require('http');
+const WebSocket = require('ws');
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+const wsClients = new Set();
+
+wss.on('connection', (ws) => {
+  ws.subscriptions = new Set();
+  wsClients.add(ws);
+  console.log('New WebSocket connection established.');
+
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+      if (data.type === 'subscribe' && data.channel) {
+        ws.subscriptions.add(data.channel);
+        console.log(`WS Client subscribed to channel: ${data.channel}`);
+      }
+    } catch (err) {
+      console.error('WS parse error:', err.message);
+    }
+  });
+
+  ws.on('close', () => {
+    wsClients.delete(ws);
+    console.log('WebSocket connection closed.');
+  });
+});
+
+// Broadcast endpoints triggered by Next.js
+app.post('/ws/broadcast-alert', (req, res) => {
+  const { alert } = req.body;
+  if (!alert) return res.status(400).json({ error: 'Missing alert data' });
+
+  let count = 0;
+  wsClients.forEach(client => {
+    if (client.subscriptions.has('feed') && client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: 'new_alert', alert }));
+      count++;
+    }
+  });
+  console.log(`WS Broadcasted new alert to ${count} clients.`);
+  res.json({ success: true, clientsNotified: count });
+});
+
+app.post('/ws/update-location', (req, res) => {
+  const { trackToken, lat, lng } = req.body;
+  if (!trackToken || !lat || !lng) return res.status(400).json({ error: 'Missing parameters' });
+
+  let count = 0;
+  wsClients.forEach(client => {
+    const channelName = `location:${trackToken}`;
+    if (client.subscriptions.has(channelName) && client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: 'location_update', trackToken, lat, lng }));
+      count++;
+    }
+  });
+  res.json({ success: true, clientsNotified: count });
+});
+
 app.get('/ping', (req, res) => res.send('alive'));
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`WhatsApp bot HTTP server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`WhatsApp bot & WS server running on port ${PORT}`);
 });
 
 client.initialize();

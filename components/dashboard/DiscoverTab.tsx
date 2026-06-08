@@ -26,8 +26,26 @@ export default function DiscoverTab() {
 
   useEffect(() => {
     fetchAlerts();
-    const interval = setInterval(fetchAlerts, 10000);
-    return () => clearInterval(interval);
+
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'subscribe', channel: 'feed' }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'new_alert' && data.alert) {
+          setAlerts(prev => [data.alert, ...prev.filter(a => a._id !== data.alert._id)]);
+        }
+      } catch (err) {}
+    };
+
+    return () => {
+      ws.close();
+    };
   }, []);
 
   return (

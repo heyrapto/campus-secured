@@ -240,27 +240,39 @@ function CTASection({ onRegister }: { onRegister: () => void }) {
   return (
     <section className="border-t border-[var(--cs-border)] py-24">
       <div className="cs-container">
-        <div className="cs-panel p-10 md:p-14 grid md:grid-cols-2 gap-10 items-center">
-          <div className="space-y-4">
+        <div className="cs-panel p-12 md:p-16 max-w-4xl mx-auto text-center space-y-8 relative overflow-hidden">
+          {/* Subtle background glow */}
+          <div 
+            className="absolute inset-0 pointer-events-none opacity-30" 
+            style={{
+              background: 'radial-gradient(circle at center, rgba(59, 191, 184, 0.08) 0%, transparent 60%)'
+            }}
+          />
+          
+          <div className="space-y-4 max-w-2xl mx-auto relative z-10">
             <h3
-              className="text-4xl md:text-5xl font-extrabold text-[var(--cs-text)]"
+              className="text-3xl md:text-4xl font-extrabold text-[var(--cs-text)] leading-tight"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               Ready to protect your campus?
             </h3>
-            <p className="text-[var(--cs-muted)]">
+            <p className="text-[var(--cs-muted)] text-sm md:text-base leading-relaxed">
               Join Campus Shield today. Registration takes under two minutes and your safety network is live immediately.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row md:flex-col gap-4">
-            <button onClick={onRegister} className="cs-btn-primary w-full justify-center">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10">
+            <button 
+              onClick={onRegister} 
+              className="cs-btn-primary w-full sm:w-auto min-w-[200px] justify-center cursor-pointer"
+            >
               Create Account <ArrowRight className="w-4 h-4" />
             </button>
             <a
               href="https://github.com"
               target="_blank"
               rel="noreferrer"
-              className="cs-btn-ghost w-full justify-center"
+              className="cs-btn-ghost w-full sm:w-auto min-w-[200px] justify-center cursor-pointer"
             >
               <Shield className="w-4 h-4" /> View Source
             </a>

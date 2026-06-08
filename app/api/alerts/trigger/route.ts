@@ -78,6 +78,18 @@ export async function POST(req: Request) {
       }).catch(e => console.error('Contact notification failed', e));
     }
 
+    // Notify WS Server
+    fetch(`${botUrl}/ws/broadcast-alert`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        alert: {
+          ...alert.toObject(),
+          studentId: { name: session.user.name }
+        }
+      })
+    }).catch(e => console.error('WS broadcast failed', e));
+
     return NextResponse.json({ alertId: alert._id, trackToken }, { status: 201 });
   } catch (error: any) {
     console.error('Trigger SOS Error:', error);

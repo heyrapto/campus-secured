@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Shield, AlertTriangle, Map, Bell, LogOut } from 'lucide-react';
+import { Shield, AlertTriangle, Map, Bell, LogOut, ShieldAlert } from 'lucide-react';
 import ReportTab from './dashboard/ReportTab';
 import DiscoverTab from './dashboard/DiscoverTab';
+import IncidentTab from './dashboard/IncidentTab';
 import WarnTab from './dashboard/WarnTab';
 
 export default function Dashboard() {
@@ -15,9 +16,10 @@ export default function Dashboard() {
   const isAdminOrGuard = role === 'admin' || role === 'guard';
 
   const tabs = [
-    { id: 'report',   label: 'Report',   Icon: AlertTriangle },
-    { id: 'discover', label: 'Discover', Icon: Map },
-    ...(isAdminOrGuard ? [{ id: 'warn', label: 'Warn', Icon: Bell }] : []),
+    { id: 'report',   label: 'SOS',      Icon: AlertTriangle },
+    { id: 'incident', label: 'Report Nearby', Icon: ShieldAlert },
+    { id: 'discover', label: 'Feed',     Icon: Map },
+    ...(isAdminOrGuard ? [{ id: 'warn', label: 'Broadcast', Icon: Bell }] : []),
   ];
 
   return (
@@ -67,13 +69,14 @@ export default function Dashboard() {
       {/* ── Content ────────────────────────────────────── */}
       <main className="flex-1 cs-container py-8 pb-28">
         {activeTab === 'report'   && <ReportTab />}
+        {activeTab === 'incident' && <IncidentTab />}
         {activeTab === 'discover' && <DiscoverTab />}
         {activeTab === 'warn' && isAdminOrGuard && <WarnTab />}
       </main>
 
       {/* ── Bottom Tab Nav ─────────────────────────────── */}
       <nav className="fixed bottom-0 w-full bg-[var(--cs-bg)]/95 backdrop-blur-md border-t border-[var(--cs-border)] z-40">
-        <div className="max-w-xs mx-auto flex items-stretch">
+        <div className="max-w-lg mx-auto flex items-stretch px-4">
           {tabs.map(({ id, label, Icon }) => {
             const active = activeTab === id;
             return (

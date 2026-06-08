@@ -133,8 +133,18 @@ export default async function TrackPage({ params }: { params: Promise<{ token: s
                     <AlertTriangle className="w-4 h-4 text-[var(--cs-red-bright)] shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-[var(--cs-text)] font-mono">{alert.type}</span>
-                      <p className="text-[11px] text-[var(--cs-muted)] font-mono mt-0.5">
-                        Triggered {new Date(alert.createdAt).toLocaleString()}
+                      {alert.landmark && (
+                        <p className="text-[11px] text-[var(--cs-text)] mt-1 font-bold">
+                          📍 Landmark: {alert.landmark}
+                        </p>
+                      )}
+                      {alert.description && (
+                        <p className="text-[11px] text-[var(--cs-muted)] mt-1.5 whitespace-pre-wrap border border-[var(--cs-border)] p-2 bg-[var(--cs-surface-alt)] font-mono leading-relaxed">
+                          {alert.description}
+                        </p>
+                      )}
+                      <p className="text-[10px] text-[var(--cs-muted)] font-mono mt-1">
+                        Reported {new Date(alert.createdAt).toLocaleString()}
                       </p>
                     </div>
                   </div>
