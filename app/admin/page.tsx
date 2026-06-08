@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   };
 
   if (status === 'loading' || loading) {
-    return <div className="min-h-screen bg-[var(--cs-bg)] flex items-center justify-center text-[var(--cs-text)] font-mono uppercase tracking-widest text-sm animate-pulse">Initializing Control Plane...</div>;
+    return null;
   }
 
   return (

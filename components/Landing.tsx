@@ -10,6 +10,7 @@ import {
   UserCheck,
   BellRing,
   ArrowRight,
+  Menu,
 } from 'lucide-react';
 import Marquee from 'react-fast-marquee';
 import LoginModal from './LoginModal';
@@ -94,12 +95,7 @@ function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin:
   return (
     <section className="cs-container py-24 grid md:grid-cols-2 gap-16 items-center">
       {/* Left copy */}
-      <motion.div
-        initial={{ opacity: 0, x: -24 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.55 }}
-        className="space-y-8"
-      >
+      <div className="space-y-8">
         <div className="cs-accent-label">Campus Emergency Response System</div>
 
         <h2
@@ -125,15 +121,10 @@ function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin:
             Log In
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Right panel — live system status card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.94 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.55, delay: 0.18 }}
-        className="cs-panel p-0 overflow-hidden"
-      >
+      <div className="cs-panel p-0 overflow-hidden">
         <div className="border-b border-[var(--cs-border)] px-5 py-3 flex items-center gap-2">
           <span className="cs-overline">system status</span>
           <span className="ml-auto flex items-center gap-1.5 text-[10px] font-mono text-[var(--cs-teal)]">
@@ -164,7 +155,7 @@ function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin:
         <div className="border-t border-[var(--cs-border)] px-5 py-3 text-xs font-mono text-[var(--cs-muted)]">
           <span className="text-[var(--cs-teal)]">&#9632;</span>&nbsp; Last updated: just now
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -185,20 +176,16 @@ function FeaturesSection() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--cs-border)]">
           {FEATURES.map(({ icon: Icon, label, desc }, i) => (
-            <motion.div
+            <div
               key={label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.07 }}
-              className="bg-[var(--cs-bg)] p-7 space-y-4 hover:bg-[var(--cs-surface)] transition-colors"
+              className="bg-[var(--cs-bg)] p-7 space-y-4"
             >
               <div className="w-10 h-10 border border-[var(--cs-teal)]/40 bg-[var(--cs-teal)]/8 flex items-center justify-center">
                 <Icon className="w-5 h-5 text-[var(--cs-teal)]" />
               </div>
               <h4 className="font-bold text-[var(--cs-text)]">{label}</h4>
               <p className="text-sm text-[var(--cs-muted)] leading-relaxed">{desc}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -227,12 +214,8 @@ function HowItWorksSection() {
         {/* Right steps */}
         <div className="space-y-0 divide-y divide-[var(--cs-border)]">
           {STEPS.map(({ num, title, desc }, i) => (
-            <motion.div
+            <div
               key={num}
-              initial={{ opacity: 0, x: 18 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
               className="flex gap-6 py-8"
             >
               <span
@@ -245,7 +228,7 @@ function HowItWorksSection() {
                 <h4 className="font-bold text-[var(--cs-text)] text-lg">{title}</h4>
                 <p className="text-sm text-[var(--cs-muted)] leading-relaxed">{desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -354,6 +337,7 @@ function Footer() {
 export default function Landing() {
   const [showLogin, setShowLogin]       = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -375,7 +359,7 @@ export default function Landing() {
             <a href="#how-it-works" className="hover:text-[var(--cs-teal)] transition-colors">How it works</a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3">
             <button
               onClick={() => setShowLogin(true)}
               className="cs-btn-ghost text-xs py-0 px-4 min-h-9"
@@ -389,7 +373,37 @@ export default function Landing() {
               Register
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="sm:hidden text-[var(--cs-text)] p-2"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
+
+        {/* Mobile Dropdown */}
+        {showMobileMenu && (
+          <div className="sm:hidden border-t border-[var(--cs-border)] bg-[var(--cs-bg)] p-4 flex flex-col gap-4 text-xs font-bold uppercase tracking-widest">
+            <a href="#features" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">Features</a>
+            <a href="#how-it-works" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">How it works</a>
+            <div className="flex flex-col gap-3 mt-2 border-t border-[var(--cs-border)] pt-4">
+              <button
+                onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}
+                className="cs-btn-ghost w-full min-h-10"
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => { setShowRegister(true); setShowMobileMenu(false); }}
+                className="cs-btn-primary w-full min-h-10"
+              >
+                Register
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Sections */}
