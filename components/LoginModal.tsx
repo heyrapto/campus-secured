@@ -7,10 +7,10 @@ import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginModal({ onClose }: { onClose: () => void }) {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,11 +18,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
     setLoading(true);
     setError('');
 
-    const res = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
+    const res = await signIn('credentials', { redirect: false, email, password });
 
     if (res?.error) {
       setError(res.error);
@@ -35,60 +31,63 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="aero-panel w-full max-w-md p-8 relative"
+        className="cs-panel w-full max-w-md p-8 relative"
       >
-        <div className="flex justify-between items-center border-b border-[var(--aero-border)] pb-4 mb-6">
-          <h2 className="text-xl font-bold text-[var(--aero-text)]" style={{ fontFamily: 'var(--font-hero)' }}>
+        <div className="flex justify-between items-center border-b border-[var(--cs-border)] pb-4 mb-6">
+          <h2
+            className="text-xl font-bold text-[var(--cs-text)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
             AUTH SYSTEM
           </h2>
-          <button 
+          <button
             onClick={onClose}
-            className="text-[var(--aero-muted)] hover:text-white transition-colors"
+            className="text-[var(--cs-muted)] hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="border border-[var(--aero-pink)] bg-[var(--aero-pink)]/10 text-[var(--aero-pink)] p-3 mb-6 text-sm">
+          <div className="border border-[var(--cs-red)] bg-[var(--cs-red)]/10 text-[var(--cs-red-bright)] p-3 mb-6 text-sm font-mono">
             [ERROR] {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-xs uppercase tracking-widest text-[var(--aero-muted)] mb-2">Email Identity</label>
-            <input 
-              type="email" 
+            <label className="cs-overline block mb-2">Email Identity</label>
+            <input
+              type="email"
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="aero-input"
+              className="cs-input"
               placeholder="student@futminna.edu.ng"
             />
           </div>
           <div>
-            <label className="block text-xs uppercase tracking-widest text-[var(--aero-muted)] mb-2">Access Key</label>
-            <input 
-              type="password" 
+            <label className="cs-overline block mb-2">Access Key</label>
+            <input
+              type="password"
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="aero-input"
+              className="cs-input"
               placeholder="••••••••"
             />
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={loading}
-            className="w-full aero-button mt-6"
+            className="w-full cs-btn-primary mt-4"
           >
-            {loading ? 'AUTHENTICATING...' : 'LOGIN_'}
+            {loading ? 'AUTHENTICATING...' : 'LOG IN'}
           </button>
         </form>
       </motion.div>

@@ -12,10 +12,14 @@ export default async function TrackPage({ params }: { params: Promise<{ token: s
   
   if (!alert) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-        <div className="glass-panel p-8 rounded-2xl text-center">
-          <h1 className="text-2xl font-bold text-red-400">Alert Not Found</h1>
-          <p className="text-slate-400 mt-2">The tracking link is invalid or expired.</p>
+      <div className="min-h-screen bg-[var(--cs-bg)] flex items-center justify-center p-4">
+        <div className="cs-panel p-10 text-center max-w-md w-full border-t-2 border-t-[var(--cs-red)]">
+          <h1 className="text-xl font-bold text-[var(--cs-red-bright)] tracking-widest font-mono">
+            [ERR: NOT FOUND]
+          </h1>
+          <p className="text-[var(--cs-muted)] mt-3 text-sm">
+            The tracking link is invalid or has expired.
+          </p>
         </div>
       </div>
     );
@@ -36,33 +40,46 @@ export default async function TrackPage({ params }: { params: Promise<{ token: s
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 flex flex-col">
-      <div className="max-w-4xl w-full mx-auto space-y-6">
-        <div className="glass p-6 rounded-2xl border-l-4 border-l-red-500">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Live Emergency Tracking</h1>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+    <div className="min-h-screen bg-[var(--cs-bg)] p-4 md:p-8 flex flex-col items-center">
+      <div className="max-w-4xl w-full space-y-8">
+        
+        <div className="border-b border-[var(--cs-border)] pb-4">
+          <div className="cs-accent-label mb-1">Public tracking link</div>
+          <h1 
+            className="text-2xl md:text-3xl font-bold text-[var(--cs-text)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            LIVE OPERATIONS MAP
+          </h1>
+        </div>
+
+        <div className="cs-panel p-6 border-l-4 border-l-[var(--cs-red)]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <p className="text-slate-400 text-sm">Status</p>
-              <p className={`font-bold ${alert.status === 'ACTIVE' ? 'text-red-400 animate-pulse' : 'text-emerald-400'}`}>
-                {alert.status}
+              <p className="cs-overline mb-1">Status</p>
+              <p className={`text-sm font-mono font-bold ${alert.status === 'ACTIVE' ? 'text-[var(--cs-red-bright)] animate-pulse' : 'text-[var(--cs-teal-bright)]'}`}>
+                [{alert.status}]
               </p>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Incident</p>
-              <p className="text-white font-medium">{alert.type}</p>
+              <p className="cs-overline mb-1">Incident</p>
+              <p className="text-[var(--cs-text)] text-sm font-bold tracking-widest uppercase">{alert.type}</p>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Student</p>
-              <p className="text-white font-medium">{alert.studentId?.name}</p>
+              <p className="cs-overline mb-1">Target</p>
+              <p className="text-[var(--cs-text)] text-sm font-bold truncate">{alert.studentId?.name}</p>
             </div>
             <div>
-              <p className="text-slate-400 text-sm">Time</p>
-              <p className="text-white font-medium">{new Date(alert.createdAt).toLocaleTimeString()}</p>
+              <p className="cs-overline mb-1">Timestamp</p>
+              <p className="text-[var(--cs-text)] text-sm font-mono">{new Date(alert.createdAt).toLocaleTimeString()}</p>
             </div>
           </div>
         </div>
 
-        <DynamicMap alerts={[serializedAlert]} />
+        <div className="cs-panel-solid p-1">
+          <DynamicMap alerts={[serializedAlert]} />
+        </div>
+        
       </div>
     </div>
   );

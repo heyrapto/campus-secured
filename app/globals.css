@@ -1,113 +1,196 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08090c;
-  --foreground: #f4f4f6;
-  
-  --aero-bg: #08090c;
-  --aero-panel: #111318;
-  --aero-panel-soft: #15181e;
-  --aero-border: #343843;
-  --aero-muted: #9699a6;
-  --aero-text: #f4f4f6;
-  --aero-accent: #4fb8b2;
-  --aero-accent-strong: #8df4eb;
-  --aero-pink: #ff4f9a;
+  /* Campus Shield Design Tokens */
+  --cs-bg:           #08090c;
+  --cs-surface:      #111318;
+  --cs-surface-alt:  #15181e;
+  --cs-border:       #2e323d;
+  --cs-muted:        #7a7e8b;
+  --cs-text:         #f0f1f5;
+  --cs-teal:         #3bbfb8;
+  --cs-teal-bright:  #7aeee7;
+  --cs-red:          #e8365d;
+  --cs-red-bright:   #ff6b8a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-hero: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:  var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
-  background: var(--aero-bg);
-  color: var(--aero-text);
+  background: var(--cs-bg);
+  color: var(--cs-text);
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    radial-gradient(circle at 20% 0%, rgba(79, 184, 178, 0.16), transparent 34rem),
-    radial-gradient(circle at 80% 10%, rgba(255, 79, 154, 0.08), transparent 30rem),
-    var(--aero-bg);
-  background-size: 72px 72px, 72px 72px, auto, auto, auto;
   font-family: var(--font-sans);
-  color: var(--aero-text);
+  color: var(--cs-text);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    radial-gradient(ellipse at 15% 5%, rgba(59, 191, 184, 0.14), transparent 40rem),
+    radial-gradient(ellipse at 85% 15%, rgba(232, 54, 93, 0.07), transparent 35rem),
+    var(--cs-bg);
+  background-size: 64px 64px, 64px 64px, auto, auto, auto;
   background-attachment: fixed;
 }
 
-/* Aeroplane Utilities */
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+
+/* ─── Campus Shield Utilities ──────────────────────────────── */
 @layer utilities {
-  .aero-panel {
-    border: 1px solid var(--aero-border);
-    background: rgba(17, 19, 24, 0.78);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-    backdrop-filter: blur(12px);
-  }
-  
-  .aero-panel-solid {
-    border: 1px solid var(--aero-border);
-    background: var(--aero-panel);
+
+  .cs-container {
+    width: min(1160px, calc(100% - 48px));
+    margin-inline: auto;
   }
 
-  .aero-button {
+  /* Panels */
+  .cs-panel {
+    border: 1px solid var(--cs-border);
+    background: rgba(17, 19, 24, 0.82);
+    backdrop-filter: blur(14px);
+  }
+
+  .cs-panel-solid {
+    border: 1px solid var(--cs-border);
+    background: var(--cs-surface);
+  }
+
+  /* Buttons */
+  .cs-btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-height: 44px;
-    padding: 0 18px;
-    border: 1px solid rgba(141, 244, 235, 0.5);
-    background: rgba(79, 184, 178, 0.16);
-    color: var(--aero-accent-strong);
+    padding: 0 22px;
+    border: 1px solid rgba(122, 238, 231, 0.45);
+    background: rgba(59, 191, 184, 0.14);
+    color: var(--cs-teal-bright);
     font-weight: 700;
-    transition: all 0.2s;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
   }
-
-  .aero-button:hover:not(:disabled) {
-    background: rgba(79, 184, 178, 0.25);
-    box-shadow: 0 0 15px rgba(79, 184, 178, 0.3);
+  .cs-btn-primary:hover:not(:disabled) {
+    background: rgba(59, 191, 184, 0.24);
+    box-shadow: 0 0 18px rgba(59, 191, 184, 0.28);
   }
-
-  .aero-button:disabled {
-    opacity: 0.5;
+  .cs-btn-primary:disabled {
+    opacity: 0.45;
     cursor: not-allowed;
   }
 
-  .aero-button-secondary {
+  .cs-btn-ghost {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     min-height: 44px;
-    padding: 0 18px;
-    border: 1px solid var(--aero-border);
-    background: rgba(17, 19, 24, 0.72);
-    color: var(--aero-text);
+    padding: 0 22px;
+    border: 1px solid var(--cs-border);
+    background: transparent;
+    color: var(--cs-text);
     font-weight: 700;
-    transition: all 0.2s;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
   }
-  
-  .aero-button-secondary:hover:not(:disabled) {
-    background: rgba(25, 29, 36, 0.9);
-    border-color: var(--aero-muted);
+  .cs-btn-ghost:hover:not(:disabled) {
+    border-color: var(--cs-muted);
+    background: rgba(255,255,255,0.03);
   }
 
-  .aero-input {
+  .cs-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid rgba(255, 107, 138, 0.45);
+    background: rgba(232, 54, 93, 0.12);
+    color: var(--cs-red-bright);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .cs-btn-danger:hover:not(:disabled) {
+    background: rgba(232, 54, 93, 0.22);
+    box-shadow: 0 0 18px rgba(232, 54, 93, 0.28);
+  }
+  .cs-btn-danger:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* Form Inputs */
+  .cs-input {
     width: 100%;
-    background: var(--aero-bg);
-    border: 1px solid var(--aero-border);
-    color: var(--aero-text);
-    padding: 0.75rem 1rem;
+    background: var(--cs-bg);
+    border: 1px solid var(--cs-border);
+    color: var(--cs-text);
+    padding: 0.7rem 1rem;
     outline: none;
     transition: border-color 0.2s;
+    font-size: 14px;
   }
-  
-  .aero-input:focus {
-    border-color: var(--aero-accent);
+  .cs-input:focus {
+    border-color: var(--cs-teal);
+  }
+
+  /* Label / Overline */
+  .cs-overline {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cs-muted);
+  }
+
+  /* Status pills */
+  .cs-pill-teal {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cs-teal-bright);
+    border: 1px solid rgba(122,238,231,0.35);
+    background: rgba(59,191,184,0.1);
+    padding: 2px 8px;
+  }
+
+  .cs-pill-red {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cs-red-bright);
+    border: 1px solid rgba(255,107,138,0.35);
+    background: rgba(232,54,93,0.1);
+    padding: 2px 8px;
+  }
+
+  /* Section divider accent */
+  .cs-accent-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cs-teal);
   }
 }

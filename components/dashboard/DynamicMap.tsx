@@ -1,3 +1,5 @@
+'use client';
+
 import dynamic from 'next/dynamic';
 
 // Next.js requires dynamic import with SSR disabled for Leaflet to work correctly.

@@ -10,7 +10,7 @@ export default function ReportTab() {
 
   const triggerSOS = async () => {
     setStatus('locating');
-    
+
     if (!navigator.geolocation) {
       alert('Geolocation is not supported by your browser');
       setStatus('idle');
@@ -27,10 +27,8 @@ export default function ReportTab() {
             body: JSON.stringify({ lat, lng, type: incidentType })
           });
           const data = await res.json();
-          
-          if (!res.ok) {
-            throw new Error(data.error);
-          }
+
+          if (!res.ok) throw new Error(data.error);
 
           setTrackToken(data.trackToken);
           setStatus('sent');
@@ -48,7 +46,7 @@ export default function ReportTab() {
     );
   };
 
-  const startLocationStream = (alertId: string, token: string) => {
+  const startLocationStream = (_alertId: string, token: string) => {
     navigator.geolocation.watchPosition(
       async pos => {
         const { latitude: lat, longitude: lng } = pos.coords;
@@ -63,29 +61,43 @@ export default function ReportTab() {
     );
   };
 
+  const idleClasses   = 'bg-[var(--cs-red)]/10 border-[var(--cs-red)] text-[var(--cs-red-bright)] hover:bg-[var(--cs-red)]/20';
+  const locatingClasses = 'bg-[var(--cs-surface-alt)] border-[var(--cs-muted)] text-[var(--cs-muted)]';
+  const sentClasses   = 'bg-[var(--cs-teal)]/10 border-[var(--cs-teal)] text-[var(--cs-teal-bright)]';
+
   return (
     <div className="flex flex-col items-center justify-center py-10 space-y-8">
-      <div className="text-center space-y-2 border-b border-[var(--aero-border)] pb-6 w-full max-w-lg">
-        <h2 className="text-3xl font-bold text-[var(--aero-text)]" style={{ fontFamily: 'var(--font-hero)' }}>
+      <div className="text-center space-y-2 border-b border-[var(--cs-border)] pb-6 w-full max-w-lg">
+        <h2
+          className="text-3xl font-bold text-[var(--cs-text)]"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
           EMERGENCY PROTOCOL
         </h2>
-        <p className="text-[var(--aero-muted)] text-sm font-mono uppercase tracking-widest">
-          Initiate priority broadcast & GPS tracking
+        <p className="text-[var(--cs-muted)] text-sm font-mono uppercase tracking-widest">
+          Initiate priority broadcast &amp; GPS tracking
         </p>
       </div>
 
-      <div className="w-full max-w-lg aero-panel p-8 flex flex-col items-center gap-8 relative overflow-hidden">
-        
-        {/* Decorative Grid Lines inside panel */}
-        <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(var(--aero-border) 1px, transparent 1px), linear-gradient(90deg, var(--aero-border) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+      <div className="w-full max-w-lg cs-panel p-8 flex flex-col items-center gap-8 relative overflow-hidden">
+
+        {/* Subtle inner grid */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-10"
+          style={{
+            backgroundImage:
+              'linear-gradient(var(--cs-border) 1px, transparent 1px), linear-gradient(90deg, var(--cs-border) 1px, transparent 1px)',
+            backgroundSize: '24px 24px'
+          }}
+        />
 
         <div className="w-full space-y-2 relative z-10">
-          <label className="block text-xs uppercase tracking-widest text-[var(--aero-muted)] mb-2">Select Incident Type</label>
+          <label className="cs-overline block mb-2">Select Incident Type</label>
           <select
             value={incidentType}
             onChange={e => setIncidentType(e.target.value)}
             disabled={status !== 'idle'}
-            className="aero-input font-bold tracking-widest uppercase text-sm"
+            className="cs-input font-bold tracking-widest uppercase text-sm"
           >
             <option value="ROBBERY">Robbery</option>
             <option value="MEDICAL">Medical Emergency</option>
@@ -98,17 +110,19 @@ export default function ReportTab() {
         <button
           onClick={triggerSOS}
           disabled={status !== 'idle'}
-          className={`relative z-10 flex flex-col items-center justify-center w-full py-8 border-2 transition-all
-            ${status === 'idle' ? 'bg-[var(--aero-pink)]/10 border-[var(--aero-pink)] text-[var(--aero-pink)] hover:bg-[var(--aero-pink)]/20' : 
-              status === 'locating' ? 'bg-[var(--aero-panel-soft)] border-[var(--aero-muted)] text-[var(--aero-muted)]' : 'bg-[var(--aero-accent)]/10 border-[var(--aero-accent)] text-[var(--aero-accent)]'}`}
+          className={`relative z-10 flex flex-col items-center justify-center w-full py-10 border-2 transition-all cursor-pointer disabled:cursor-not-allowed ${
+            status === 'idle' ? idleClasses : status === 'locating' ? locatingClasses : sentClasses
+          }`}
         >
           {status === 'idle' && (
             <>
               <ShieldAlert className="w-12 h-12 mb-3" />
-              <span className="font-bold tracking-[0.3em] text-xl" style={{ fontFamily: 'var(--font-hero)' }}>TRIGGER SOS</span>
+              <span className="font-bold tracking-[0.3em] text-xl" style={{ fontFamily: 'var(--font-display)' }}>
+                TRIGGER SOS
+              </span>
             </>
           )}
-          
+
           {status === 'locating' && (
             <>
               <MapPin className="w-10 h-10 mb-3 animate-pulse" />
@@ -125,9 +139,11 @@ export default function ReportTab() {
         </button>
 
         {status === 'sent' && trackToken && (
-          <div className="w-full relative z-10 bg-[var(--aero-panel-soft)] border border-[var(--aero-border)] p-4 text-center space-y-2">
-            <p className="text-[var(--aero-accent-strong)] text-xs uppercase tracking-widest font-bold">>> Security Notified</p>
-            <div className="bg-[var(--aero-bg)] border border-[var(--aero-border)] p-2 text-xs text-[var(--aero-muted)] break-all font-mono">
+          <div className="w-full relative z-10 bg-[var(--cs-surface-alt)] border border-[var(--cs-border)] p-4 text-center space-y-2">
+            <p className="text-[var(--cs-teal-bright)] text-xs uppercase tracking-widest font-bold">
+              Security Notified
+            </p>
+            <div className="bg-[var(--cs-bg)] border border-[var(--cs-border)] p-2 text-xs text-[var(--cs-muted)] break-all font-mono">
               [TRK] {window.location.origin}/track/{trackToken}
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import DynamicMap from '@/components/dashboard/DynamicMap';
-import { CheckCircle, MapPin, Shield } from 'lucide-react';
+import { CheckCircle, Shield, PhoneForwarded } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -53,63 +53,71 @@ export default function AdminDashboard() {
   };
 
   if (status === 'loading' || loading) {
-    return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Loading...</div>;
+    return <div className="min-h-screen bg-[var(--cs-bg)] flex items-center justify-center text-[var(--cs-text)] font-mono uppercase tracking-widest text-sm animate-pulse">Initializing Control Plane...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col">
-      <header className="w-full p-4 glass border-b border-white/5 sticky top-0 z-40 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Shield className="w-6 h-6 text-emerald-400" />
-          <h1 className="text-xl font-bold tracking-tight text-white">Security <span className="text-emerald-400">Command Center</span></h1>
+    <div className="min-h-screen flex flex-col">
+      <header className="w-full border-b border-[var(--cs-border)] bg-[var(--cs-surface)]/90 backdrop-blur-sm sticky top-0 z-40">
+        <div className="cs-container flex justify-between items-center py-4">
+          <div className="flex items-center gap-3">
+            <Shield className="w-5 h-5 text-[var(--cs-teal)]" />
+            <h1 className="text-base font-bold tracking-widest text-[var(--cs-text)]" style={{ fontFamily: 'var(--font-display)' }}>
+              SECURITY COMMAND CENTER
+            </h1>
+          </div>
+          <button onClick={() => router.push('/')} className="cs-btn-ghost py-1 px-3 min-h-8 text-[10px]">
+            &larr; Dashboard
+          </button>
         </div>
-        <button onClick={() => router.push('/')} className="text-sm text-slate-400 hover:text-white">
-          Back to Dashboard
-        </button>
       </header>
 
-      <main className="flex-1 p-4 max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="flex-1 cs-container py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-xl font-bold text-white">Live Operations Map</h2>
-          <DynamicMap alerts={alerts} />
+          <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--cs-teal)] border-b border-[var(--cs-border)] pb-2">Live Operations Map</h2>
+          <div className="cs-panel-solid p-1">
+            <DynamicMap alerts={alerts} />
+          </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-white">Active Incidents ({alerts.length})</h2>
+          <div className="flex items-center justify-between border-b border-[var(--cs-border)] pb-2">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--cs-red-bright)]">Active Incidents</h2>
+            <span className="cs-pill-red">{alerts.length}</span>
+          </div>
           
           {alerts.length === 0 ? (
-            <div className="glass-panel p-6 text-center rounded-xl">
-              <p className="text-emerald-400 font-medium">All clear. No active incidents.</p>
+            <div className="cs-panel p-6 text-center border-l-2 border-[var(--cs-teal)]">
+              <p className="text-[var(--cs-teal-bright)] text-xs font-bold tracking-widest uppercase font-mono">All clear. No active incidents.</p>
             </div>
           ) : (
-            <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-2">
               {alerts.map(alert => (
-                <div key={alert._id} className="glass p-4 rounded-xl border-l-4 border-l-red-500 space-y-3">
+                <div key={alert._id} className="cs-panel p-5 border-l-2 border-l-[var(--cs-red)] flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-bold text-white">{alert.type} Alert</h4>
-                      <p className="text-sm text-slate-300">Student: {alert.studentId?.name}</p>
-                      <p className="text-xs text-slate-400">{alert.studentId?.whatsapp || 'No WhatsApp'}</p>
+                      <h4 className="font-bold text-[var(--cs-text)] text-sm tracking-widest uppercase">{alert.type} ALERT</h4>
+                      <p className="text-xs text-[var(--cs-muted)] mt-1 font-mono">Target: {alert.studentId?.name}</p>
+                      <p className="text-xs text-[var(--cs-muted)] font-mono mt-0.5">Contact: {alert.studentId?.whatsapp || 'NO WA'}</p>
                     </div>
-                    <span className="text-xs text-slate-400">
-                      {new Date(alert.createdAt).toLocaleTimeString()}
+                    <span className="text-[10px] text-[var(--cs-muted)] font-mono border border-[var(--cs-border)] px-1.5 py-0.5">
+                      {new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
 
-                  <div className="flex gap-2 pt-2 border-t border-slate-700/50">
+                  <div className="flex gap-2">
                     <button 
                       onClick={() => window.open(`https://wa.me/${alert.studentId?.whatsapp}`)}
                       disabled={!alert.studentId?.whatsapp}
-                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                      className="flex-1 cs-btn-ghost min-h-9 py-0 text-[10px]"
                     >
-                      WhatsApp
+                      <PhoneForwarded className="w-3 h-3" /> WhatsApp
                     </button>
                     <button 
                       onClick={() => resolveAlert(alert._id)}
-                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 text-xs font-semibold rounded-lg transition-colors"
+                      className="flex-1 cs-btn-primary min-h-9 py-0 text-[10px]"
                     >
-                      <CheckCircle className="w-4 h-4" />
-                      Resolve
+                      <CheckCircle className="w-3 h-3" /> Resolve
                     </button>
                   </div>
                 </div>

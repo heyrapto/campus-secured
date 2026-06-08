@@ -2,125 +2,410 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield } from 'lucide-react';
+import {
+  Shield,
+  MessageCircle,
+  MapPin,
+  Radio,
+  UserCheck,
+  BellRing,
+  ArrowRight,
+} from 'lucide-react';
+import Marquee from 'react-fast-marquee';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 
+/* ─── Data ──────────────────────────────────────────────────── */
+
+const FEATURES = [
+  {
+    icon: BellRing,
+    label: 'One-Tap SOS',
+    desc: 'Hit the SOS button and your live GPS coordinates are instantly broadcast to campus security and your registered emergency contacts.',
+  },
+  {
+    icon: MessageCircle,
+    label: 'WhatsApp Integration',
+    desc: 'No internet? No problem. Send HELP, SOS, or SAFE directly through WhatsApp. The bot routes every message to the right responders.',
+  },
+  {
+    icon: MapPin,
+    label: 'Live GPS Tracking',
+    desc: 'Security guards can follow your real-time movement on a live map until you are confirmed safe or the incident is resolved.',
+  },
+  {
+    icon: Radio,
+    label: 'Campus-Wide Broadcasts',
+    desc: 'Admins push emergency alerts instantly to every registered student on campus — robbery, fire, lockdown — within seconds.',
+  },
+  {
+    icon: UserCheck,
+    label: 'Emergency Contacts',
+    desc: 'Register up to three emergency contacts. They receive a shareable tracking link the moment you trigger an SOS.',
+  },
+  {
+    icon: Shield,
+    label: 'Role-Based Access',
+    desc: 'Students report. Guards respond. Admins broadcast. Separate dashboards and permissions keep each role focused.',
+  },
+];
+
+const STEPS = [
+  {
+    num: '01',
+    title: 'Register your profile',
+    desc: 'Create an account with your student ID, WhatsApp number, and up to three emergency contacts. Takes under two minutes.',
+  },
+  {
+    num: '02',
+    title: 'Enable location access',
+    desc: 'Allow the app to access your GPS so that when you trigger SOS, your exact position is captured and shared immediately.',
+  },
+  {
+    num: '03',
+    title: 'Trigger SOS when needed',
+    desc: 'Open the app, choose the incident type, and hit TRIGGER SOS. Security is notified and your contacts get a live tracking link.',
+  },
+];
+
+/* ─── Sections ───────────────────────────────────────────────── */
+
+function Ticker() {
+  const items = [
+    'sos.ready', 'whatsapp.linked', 'gps.enabled', 'security.dispatched',
+    'contacts.notified', 'campus.protected', 'alert.active', 'tracking.live',
+  ];
+
+  return (
+    <div className="border-y border-[var(--cs-border)] overflow-hidden py-3 bg-[var(--cs-surface)]/50">
+      <Marquee speed={40} gradient={false} autoFill>
+        {items.map((item, i) => (
+          <span key={i} className="text-xs font-mono uppercase tracking-widest text-[var(--cs-muted)] flex items-center gap-3 px-6">
+            <span className="inline-block w-1 h-1 rounded-full bg-[var(--cs-teal)]" />
+            {item}
+          </span>
+        ))}
+      </Marquee>
+    </div>
+  );
+}
+
+function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin: () => void }) {
+  return (
+    <section className="cs-container py-24 grid md:grid-cols-2 gap-16 items-center">
+      {/* Left copy */}
+      <motion.div
+        initial={{ opacity: 0, x: -24 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.55 }}
+        className="space-y-8"
+      >
+        <div className="cs-accent-label">Campus Emergency Response System</div>
+
+        <h2
+          className="text-5xl md:text-[4.5rem] leading-[1.06] font-extrabold text-[var(--cs-text)]"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          Protect your campus.
+          <br />
+          <span style={{ color: 'var(--cs-teal)' }}>In seconds.</span>
+        </h2>
+
+        <div className="border-l-2 border-[var(--cs-border)] pl-5 space-y-3">
+          <p className="text-lg text-[var(--cs-muted)] leading-relaxed max-w-md">
+            Trigger SOS alerts, share live GPS, notify emergency contacts, and receive campus-wide broadcasts — all from one app.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-4 pt-2">
+          <button onClick={onRegister} className="cs-btn-primary">
+            Get Started <ArrowRight className="w-4 h-4" />
+          </button>
+          <button onClick={onLogin} className="cs-btn-ghost">
+            Log In
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Right panel — live system status card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.55, delay: 0.18 }}
+        className="cs-panel p-0 overflow-hidden"
+      >
+        <div className="border-b border-[var(--cs-border)] px-5 py-3 flex items-center gap-2">
+          <span className="cs-overline">system status</span>
+          <span className="ml-auto flex items-center gap-1.5 text-[10px] font-mono text-[var(--cs-teal)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--cs-teal)] animate-pulse" />
+            operational
+          </span>
+        </div>
+
+        <div className="p-5 space-y-0 font-mono text-sm divide-y divide-[var(--cs-border)]">
+          {[
+            { key: 'sos.handler',      val: 'active',   pill: 'teal' },
+            { key: 'whatsapp.bot',     val: 'linked',   pill: 'teal' },
+            { key: 'gps.tracking',     val: 'ready',    pill: 'teal' },
+            { key: 'broadcast.queue',  val: 'standby',  pill: null   },
+            { key: 'security.nodes',   val: '3 online', pill: null   },
+          ].map(row => (
+            <div key={row.key} className="flex items-center justify-between py-3">
+              <span className="text-[var(--cs-muted)] text-xs">{row.key}</span>
+              {row.pill ? (
+                <span className="cs-pill-teal">{row.val}</span>
+              ) : (
+                <span className="text-[var(--cs-text)] text-xs">{row.val}</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-[var(--cs-border)] px-5 py-3 text-xs font-mono text-[var(--cs-muted)]">
+          <span className="text-[var(--cs-teal)]">&#9632;</span>&nbsp; Last updated: just now
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+function FeaturesSection() {
+  return (
+    <section id="features" className="border-t border-[var(--cs-border)] py-24">
+      <div className="cs-container space-y-14">
+        <div className="space-y-3">
+          <div className="cs-accent-label">What it does</div>
+          <h3
+            className="text-4xl md:text-5xl font-extrabold text-[var(--cs-text)] max-w-xl"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Everything security needs.
+          </h3>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--cs-border)]">
+          {FEATURES.map(({ icon: Icon, label, desc }, i) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07 }}
+              className="bg-[var(--cs-bg)] p-7 space-y-4 hover:bg-[var(--cs-surface)] transition-colors"
+            >
+              <div className="w-10 h-10 border border-[var(--cs-teal)]/40 bg-[var(--cs-teal)]/8 flex items-center justify-center">
+                <Icon className="w-5 h-5 text-[var(--cs-teal)]" />
+              </div>
+              <h4 className="font-bold text-[var(--cs-text)]">{label}</h4>
+              <p className="text-sm text-[var(--cs-muted)] leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorksSection() {
+  return (
+    <section id="how-it-works" className="border-t border-[var(--cs-border)] py-24">
+      <div className="cs-container grid md:grid-cols-2 gap-16 items-start">
+        {/* Left */}
+        <div className="space-y-4 md:sticky md:top-24">
+          <div className="cs-accent-label">After registration</div>
+          <h3
+            className="text-4xl md:text-5xl font-extrabold text-[var(--cs-text)] leading-[1.08]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Your phone becomes a panic button.
+          </h3>
+          <p className="text-[var(--cs-muted)] leading-relaxed max-w-sm">
+            Campus Shield keeps your safety network one tap away — even when you have no time to type.
+          </p>
+        </div>
+
+        {/* Right steps */}
+        <div className="space-y-0 divide-y divide-[var(--cs-border)]">
+          {STEPS.map(({ num, title, desc }, i) => (
+            <motion.div
+              key={num}
+              initial={{ opacity: 0, x: 18 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex gap-6 py-8"
+            >
+              <span
+                className="text-[var(--cs-red)] font-mono text-xs font-bold mt-1 shrink-0"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {num}
+              </span>
+              <div className="space-y-2">
+                <h4 className="font-bold text-[var(--cs-text)] text-lg">{title}</h4>
+                <p className="text-sm text-[var(--cs-muted)] leading-relaxed">{desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTASection({ onRegister }: { onRegister: () => void }) {
+  return (
+    <section className="border-t border-[var(--cs-border)] py-24">
+      <div className="cs-container">
+        <div className="cs-panel p-10 md:p-14 grid md:grid-cols-2 gap-10 items-center">
+          <div className="space-y-4">
+            <h3
+              className="text-4xl md:text-5xl font-extrabold text-[var(--cs-text)]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Ready to protect your campus?
+            </h3>
+            <p className="text-[var(--cs-muted)]">
+              Join Campus Shield today. Registration takes under two minutes and your safety network is live immediately.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row md:flex-col gap-4">
+            <button onClick={onRegister} className="cs-btn-primary w-full justify-center">
+              Create Account <ArrowRight className="w-4 h-4" />
+            </button>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noreferrer"
+              className="cs-btn-ghost w-full justify-center"
+            >
+              <Shield className="w-4 h-4" /> View Source
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-[var(--cs-border)] bg-[var(--cs-surface)]/40">
+      <div className="cs-container py-10">
+        <div className="flex flex-col md:flex-row justify-between gap-8">
+          {/* Brand */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-[var(--cs-teal)]" />
+              <span
+                className="font-bold tracking-widest text-sm text-[var(--cs-text)]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                CAMPUS SHIELD
+              </span>
+            </div>
+            <p className="text-xs text-[var(--cs-muted)] max-w-xs leading-relaxed">
+              Proactive emergency response for Nigerian university campuses. Built with Next.js, MongoDB, and WhatsApp.
+            </p>
+          </div>
+
+          {/* Links */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 text-sm">
+            <div className="space-y-3">
+              <p className="cs-overline">Platform</p>
+              <ul className="space-y-2 text-[var(--cs-muted)]">
+                <li><a href="#features" className="hover:text-[var(--cs-teal)] transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="hover:text-[var(--cs-teal)] transition-colors">How it works</a></li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <p className="cs-overline">Access</p>
+              <ul className="space-y-2 text-[var(--cs-muted)]">
+                <li><button className="hover:text-[var(--cs-teal)] transition-colors">Student Login</button></li>
+                <li><button className="hover:text-[var(--cs-teal)] transition-colors">Register</button></li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <p className="cs-overline">System</p>
+              <ul className="space-y-2 text-[var(--cs-muted)]">
+                <li>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--cs-teal)]" />
+                    Operational
+                  </span>
+                </li>
+                <li>CERS v2.0</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-[var(--cs-border)] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[var(--cs-muted)] font-mono">
+          <span>Campus Shield CERS v2.0. All rights reserved.</span>
+          <span>system.status: <span className="text-[var(--cs-teal)]">operational</span></span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── Page ───────────────────────────────────────────────────── */
+
 export default function Landing() {
-  const [showLogin, setShowLogin] = useState(false);
+  const [showLogin, setShowLogin]       = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
-      <header className="w-full p-6 flex justify-between items-center z-10 aero-container">
-        <div className="flex items-center gap-3">
-          <Shield className="w-8 h-8" style={{ color: 'var(--aero-accent)' }} />
-          <h1 className="text-xl font-bold tracking-widest text-[var(--aero-text)]" style={{ fontFamily: 'var(--font-hero)' }}>
-            CAMPUS SHIELD
-          </h1>
-        </div>
-        <div className="flex items-center gap-6 text-[13px] text-[var(--aero-muted)] tracking-widest uppercase">
-          <button onClick={() => setShowLogin(true)} className="hover:text-[var(--aero-accent-strong)] transition-colors">
-            Log in
-          </button>
-          <button onClick={() => setShowRegister(true)} className="hover:text-[var(--aero-accent-strong)] transition-colors">
-            Register
-          </button>
+    <div className="min-h-screen flex flex-col">
+      {/* Nav */}
+      <header className="sticky top-0 z-40 border-b border-[var(--cs-border)] bg-[var(--cs-bg)]/90 backdrop-blur-sm">
+        <div className="cs-container flex justify-between items-center py-4">
+          <div className="flex items-center gap-2.5">
+            <Shield className="w-6 h-6 text-[var(--cs-teal)]" />
+            <span
+              className="font-bold tracking-widest text-base text-[var(--cs-text)]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              CAMPUS SHIELD
+            </span>
+          </div>
+
+          <nav className="hidden sm:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[var(--cs-muted)]">
+            <a href="#features" className="hover:text-[var(--cs-teal)] transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-[var(--cs-teal)] transition-colors">How it works</a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowLogin(true)}
+              className="cs-btn-ghost text-xs py-0 px-4 min-h-9"
+            >
+              Log In
+            </button>
+            <button
+              onClick={() => setShowRegister(true)}
+              className="cs-btn-primary text-xs py-0 px-4 min-h-9"
+            >
+              Register
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-start justify-center p-6 z-10 aero-container pt-20">
-        <div className="grid md:grid-cols-2 gap-12 w-full">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-8"
-          >
-            <h2 
-              className="text-6xl md:text-[5.5rem] leading-[1.05] font-extrabold text-[var(--aero-text)]" 
-              style={{ fontFamily: 'var(--font-hero)' }}
-            >
-              Protect your campus.
-            </h2>
-            <div className="border-l border-[var(--aero-border)] pl-6 py-2 space-y-4 max-w-lg">
-              <p className="text-lg text-[var(--aero-muted)]">
-                The proactive emergency response system. Trigger SOS alerts, notify contacts, and deploy security guards within seconds.
-              </p>
-              <p className="text-sm text-[var(--aero-accent)]">
-                Bring safety directly to your phone. Connect with WhatsApp.
-              </p>
-            </div>
-            <div className="pt-4 flex gap-4">
-              <button 
-                onClick={() => setShowRegister(true)}
-                className="aero-button"
-              >
-                GET STARTED &rarr;
-              </button>
-              <button 
-                onClick={() => setShowLogin(true)}
-                className="aero-button-secondary"
-              >
-                Log In
-              </button>
-            </div>
-          </motion.div>
+      {/* Sections */}
+      <HeroSection onRegister={() => setShowRegister(true)} onLogin={() => setShowLogin(true)} />
+      
+      {/* Ticker */}
+      <Ticker />
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="aero-panel p-8 flex flex-col space-y-6"
-          >
-            <div className="text-[10px] text-[var(--aero-muted)] uppercase tracking-widest mb-2 border-b border-[var(--aero-border)] pb-4">
-              System Capabilities
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <span className="text-[var(--aero-pink)] text-xs mt-1">01</span>
-                <div>
-                  <h3 className="font-bold text-[var(--aero-text)]">Live SOS Tracking</h3>
-                  <p className="text-sm text-[var(--aero-muted)] mt-1">
-                    Send real-time GPS coordinates directly to campus security and emergency contacts.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <span className="text-[var(--aero-pink)] text-xs mt-1">02</span>
-                <div>
-                  <h3 className="font-bold text-[var(--aero-text)]">WhatsApp Integration</h3>
-                  <p className="text-sm text-[var(--aero-muted)] mt-1">
-                    Operate via WhatsApp bots. Quick commands for fast reporting in low-bandwidth areas.
-                  </p>
-                </div>
-              </div>
+      <FeaturesSection />
+      <HowItWorksSection />
+      <CTASection onRegister={() => setShowRegister(true)} />
+      <Footer />
 
-              <div className="flex items-start gap-4">
-                <span className="text-[var(--aero-pink)] text-xs mt-1">03</span>
-                <div>
-                  <h3 className="font-bold text-[var(--aero-text)]">Incident Broadcasts</h3>
-                  <p className="text-sm text-[var(--aero-muted)] mt-1">
-                    Receive mass campus-wide alerts when critical incidents are ongoing.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </main>
-
-      <footer className="w-full border-t border-[var(--aero-border)] mt-20">
-        <div className="aero-container py-6 flex justify-between text-xs text-[var(--aero-muted)] font-mono">
-          <span>Campus Shield CERS v2.0. Protect your students.</span>
-          <span className="text-[var(--aero-text)]">system: operational</span>
-        </div>
-      </footer>
-
+      {/* Modals */}
       <AnimatePresence>
-        {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+        {showLogin    && <LoginModal    onClose={() => setShowLogin(false)} />}
         {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
       </AnimatePresence>
     </div>

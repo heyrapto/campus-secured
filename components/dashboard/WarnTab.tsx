@@ -2,21 +2,17 @@
 
 import { useState } from 'react';
 import { Send, AlertOctagon } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function WarnTab() {
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [status, setStatus]   = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
   const sendBroadcast = async () => {
-    if (!message) return;
+    if (!message.trim()) return;
     setStatus('sending');
 
     try {
-      // Create an endpoint for admin broadcast.
-      // Since it wasn't strictly in our previous tasks, we will mock it or call the bot directly if allowed.
-      // We will assume there's an api route `/api/alerts/broadcast` that we need to build.
       const res = await fetch('/api/alerts/broadcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -24,60 +20,80 @@ export default function WarnTab() {
       });
 
       if (!res.ok) throw new Error('Broadcast failed');
-      
+
       setStatus('sent');
       setMessage('');
-      setTimeout(() => setStatus('idle'), 3000);
+      setTimeout(() => setStatus('idle'), 4000);
     } catch (e: any) {
       setStatus('error');
       setErrorMsg(e.message);
-      setTimeout(() => setStatus('idle'), 3000);
+      setTimeout(() => setStatus('idle'), 4000);
     }
   };
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
-      <div>
-        <h2 className="text-2xl font-bold text-white">Admin Broadcast</h2>
-        <p className="text-slate-400">Send an emergency message to all registered students via WhatsApp.</p>
+    <div className="space-y-8 max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="border-b border-[var(--cs-border)] pb-4">
+        <div className="cs-accent-label mb-1">Admin only</div>
+        <h2
+          className="text-2xl font-bold text-[var(--cs-text)]"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          BROADCAST SYSTEM
+        </h2>
       </div>
 
-      <div className="glass-panel p-6 rounded-2xl space-y-6">
-        <div className="bg-amber-500/20 border border-amber-500/50 p-4 rounded-xl flex gap-3 text-amber-200">
-          <AlertOctagon className="w-6 h-6 shrink-0" />
-          <p className="text-sm">Warning: This will immediately send a WhatsApp message to all students on campus. Use only for real emergencies.</p>
+      <div className="cs-panel p-8 space-y-6">
+        {/* Warning banner */}
+        <div className="border border-[var(--cs-red)]/50 bg-[var(--cs-red)]/8 p-4 flex gap-3 text-[var(--cs-red-bright)]">
+          <AlertOctagon className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="text-xs font-mono uppercase tracking-widest leading-relaxed">
+            This executes an immediate WhatsApp broadcast to all registered student nodes on campus. Use only for confirmed emergencies.
+          </p>
         </div>
 
+        {/* Message input */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-300">Broadcast Message</label>
+          <label className="cs-overline block">Message Payload</label>
           <textarea
             value={message}
             onChange={e => setMessage(e.target.value)}
             rows={5}
-            className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-            placeholder="🚨 CAMPUS ALERT: Armed robbery reported near north gate. Avoid the area. Security has been dispatched."
+            className="cs-input font-mono text-sm resize-none"
+            placeholder="[CAMPUS ALERT] Armed robbery reported near North Gate. Avoid the area. Security has been deployed."
           />
+          <p className="text-[10px] font-mono text-[var(--cs-muted)]">
+            {message.length} characters · will be sent to all registered WhatsApp numbers
+          </p>
         </div>
 
-        {status === 'error' && <p className="text-red-400 text-sm">{errorMsg}</p>}
-        {status === 'sent' && <p className="text-emerald-400 text-sm">Broadcast sent successfully!</p>}
+        {/* Status messages */}
+        {status === 'error' && (
+          <p className="text-[var(--cs-red-bright)] text-xs font-mono border border-[var(--cs-red)]/50 p-3">
+            ERR: {errorMsg}
+          </p>
+        )}
+        {status === 'sent' && (
+          <p className="text-[var(--cs-teal-bright)] text-xs font-mono border border-[var(--cs-teal)]/50 p-3">
+            SUCCESS: Payload delivered to WhatsApp broadcast queue.
+          </p>
+        )}
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={sendBroadcast}
-          disabled={status === 'sending' || !message}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-all disabled:opacity-50"
+          disabled={status === 'sending' || !message.trim()}
+          className="w-full cs-btn-primary"
         >
           {status === 'sending' ? (
-            'Sending Broadcast...'
+            'TRANSMITTING...'
           ) : (
             <>
-              <Send className="w-5 h-5" />
-              Send to All Students
+              <Send className="w-4 h-4" />
+              EXECUTE BROADCAST
             </>
           )}
-        </motion.button>
+        </button>
       </div>
     </div>
   );

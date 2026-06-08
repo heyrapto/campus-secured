@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Clock } from 'lucide-react';
+import { AlertTriangle, Clock, RefreshCw } from 'lucide-react';
 import DynamicMap from './DynamicMap';
 
 export default function DiscoverTab() {
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alerts, setAlerts]   = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAlerts = async () => {
@@ -31,52 +31,71 @@ export default function DiscoverTab() {
 
   return (
     <div className="space-y-8">
-      <div className="border-b border-[var(--aero-border)] pb-4">
-        <h2 className="text-2xl font-bold text-[var(--aero-text)]" style={{ fontFamily: 'var(--font-hero)' }}>
-          CAMPUS FEED
-        </h2>
-        <p className="text-[var(--aero-muted)] text-xs uppercase tracking-widest mt-1">Global operations overview</p>
+      {/* Header */}
+      <div className="border-b border-[var(--cs-border)] pb-4 flex items-end justify-between">
+        <div>
+          <div className="cs-accent-label mb-1">Global overview</div>
+          <h2
+            className="text-2xl font-bold text-[var(--cs-text)]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            CAMPUS FEED
+          </h2>
+        </div>
+        <button
+          onClick={fetchAlerts}
+          className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] transition-colors flex items-center gap-1.5 text-xs uppercase tracking-widest"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+        </button>
       </div>
 
-      <div className="aero-panel p-1">
+      {/* Map */}
+      <div className="cs-panel-solid p-1">
         <DynamicMap alerts={alerts} />
       </div>
 
+      {/* Alert list */}
       <div className="space-y-4">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--aero-accent)] border-b border-[var(--aero-border)] pb-2">
-          Active Threats ({alerts.length})
-        </h3>
-        
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--cs-teal)]">
+            Active Threats
+          </h3>
+          <span className="cs-pill-red">{alerts.length} live</span>
+        </div>
+
         {loading ? (
-          <div className="text-[var(--aero-muted)] text-xs font-mono animate-pulse">Scanning frequencies...</div>
+          <p className="text-[var(--cs-muted)] text-xs font-mono animate-pulse">Scanning campus frequencies...</p>
         ) : alerts.length === 0 ? (
-          <div className="aero-panel p-6 text-center">
-            <p className="text-[var(--aero-accent-strong)] text-sm font-bold tracking-widest uppercase">System nominal. No active alerts.</p>
+          <div className="cs-panel p-8 text-center">
+            <p className="text-[var(--cs-teal-bright)] text-sm font-bold tracking-widest uppercase">
+              All clear — no active alerts.
+            </p>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-px bg-[var(--cs-border)] sm:grid-cols-2">
             {alerts.map((alert, i) => (
-              <motion.div 
+              <motion.div
                 key={alert._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="aero-panel p-4 flex items-start gap-4 border-l-2 border-l-[var(--aero-pink)]"
+                transition={{ delay: i * 0.08 }}
+                className="bg-[var(--cs-bg)] hover:bg-[var(--cs-surface)] transition-colors p-5 flex items-start gap-4 border-l-2 border-l-[var(--cs-red)]"
               >
-                <div className="bg-[var(--aero-pink)]/10 p-2 border border-[var(--aero-pink)]/30">
-                  <AlertTriangle className="w-5 h-5 text-[var(--aero-pink)]" />
+                <div className="bg-[var(--cs-red)]/10 p-2 border border-[var(--cs-red)]/30 shrink-0">
+                  <AlertTriangle className="w-4 h-4 text-[var(--cs-red-bright)]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-[var(--aero-text)] truncate">{alert.type} INCIDENT</h4>
-                    <span className="text-[10px] text-[var(--aero-muted)] flex items-center gap-1 bg-[var(--aero-bg)] px-2 border border-[var(--aero-border)]">
-                      <Clock className="w-3 h-3" />
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-bold text-[var(--cs-text)] text-sm truncate">{alert.type}</h4>
+                    <span className="shrink-0 flex items-center gap-1 text-[10px] text-[var(--cs-muted)] font-mono border border-[var(--cs-border)] px-1.5 py-0.5">
+                      <Clock className="w-2.5 h-2.5" />
                       {new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <div className="text-xs text-[var(--aero-muted)] mt-2 font-mono space-y-1">
-                    <p>TARGET: <span className="text-[var(--aero-text)]">{alert.studentId?.name || 'UNKNOWN'}</span></p>
-                    <p>STATUS: <span className="text-[var(--aero-pink)] animate-pulse">CRITICAL</span></p>
+                  <div className="mt-2 space-y-1 text-[11px] font-mono text-[var(--cs-muted)]">
+                    <p>target: <span className="text-[var(--cs-text)]">{alert.studentId?.name || 'UNKNOWN'}</span></p>
+                    <p>status: <span className="text-[var(--cs-red-bright)] animate-pulse">CRITICAL</span></p>
                   </div>
                 </div>
               </motion.div>

@@ -14,63 +14,69 @@ export default function Dashboard() {
   const role = (session?.user as any)?.role || 'student';
   const isAdminOrGuard = role === 'admin' || role === 'guard';
 
+  const tabs = [
+    { id: 'report',   label: 'Report',   Icon: AlertTriangle },
+    { id: 'discover', label: 'Discover', Icon: Map },
+    ...(isAdminOrGuard ? [{ id: 'warn', label: 'Warn', Icon: Bell }] : []),
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="w-full p-4 border-b border-[var(--aero-border)] bg-[var(--aero-panel)]/80 backdrop-blur-sm sticky top-0 z-40 flex justify-between items-center">
-        <div className="flex items-center gap-3 aero-container m-0">
-          <Shield className="w-6 h-6 text-[var(--aero-accent)]" />
-          <h1 className="text-xl font-bold tracking-widest text-[var(--aero-text)]" style={{ fontFamily: 'var(--font-hero)' }}>
-            CONTROL PLANE
-          </h1>
-        </div>
-        <div className="flex items-center gap-4 text-xs font-mono">
-          <span className="text-[var(--aero-accent-strong)] hidden sm:inline-block border border-[var(--aero-accent)]/30 px-2 py-1 bg-[var(--aero-accent)]/10">
-            user_id: {session?.user?.name} [{role}]
-          </span>
-          <button 
-            onClick={() => signOut()}
-            className="text-[var(--aero-muted)] hover:text-[var(--aero-pink)] transition-colors p-2 flex items-center gap-2 uppercase tracking-widest"
-          >
-            <span className="hidden sm:inline">Logout</span>
-            <LogOut className="w-4 h-4" />
-          </button>
+      {/* Header */}
+      <header className="w-full border-b border-[var(--cs-border)] bg-[var(--cs-surface)]/90 backdrop-blur-sm sticky top-0 z-40">
+        <div className="cs-container flex justify-between items-center py-4">
+          <div className="flex items-center gap-3">
+            <Shield className="w-5 h-5 text-[var(--cs-teal)]" />
+            <h1
+              className="text-base font-bold tracking-widest text-[var(--cs-text)]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              CAMPUS SHIELD
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4 text-xs font-mono">
+            <span className="hidden sm:inline-block cs-pill-teal">
+              {session?.user?.name} · {role}
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors flex items-center gap-2 uppercase tracking-widest"
+            >
+              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 p-4 w-full aero-container pb-24 mt-4">
-        {activeTab === 'report' && <ReportTab />}
+      {/* Content */}
+      <main className="flex-1 cs-container py-8 pb-28">
+        {activeTab === 'report'   && <ReportTab />}
         {activeTab === 'discover' && <DiscoverTab />}
         {activeTab === 'warn' && isAdminOrGuard && <WarnTab />}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full border-t border-[var(--aero-border)] bg-[var(--aero-panel)] px-6 py-4 z-40">
-        <div className="max-w-md mx-auto flex justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold">
-          <button 
-            onClick={() => setActiveTab('report')}
-            className={`flex flex-col items-center gap-2 transition-colors ${activeTab === 'report' ? 'text-[var(--aero-accent-strong)]' : 'text-[var(--aero-muted)] hover:text-white'}`}
-          >
-            <AlertTriangle className="w-5 h-5" />
-            <span>Report</span>
-          </button>
-          
-          <button 
-            onClick={() => setActiveTab('discover')}
-            className={`flex flex-col items-center gap-2 transition-colors ${activeTab === 'discover' ? 'text-[var(--aero-accent-strong)]' : 'text-[var(--aero-muted)] hover:text-white'}`}
-          >
-            <Map className="w-5 h-5" />
-            <span>Discover</span>
-          </button>
-
-          {isAdminOrGuard && (
-            <button 
-              onClick={() => setActiveTab('warn')}
-              className={`flex flex-col items-center gap-2 transition-colors ${activeTab === 'warn' ? 'text-[var(--aero-accent-strong)]' : 'text-[var(--aero-muted)] hover:text-white'}`}
-            >
-              <Bell className="w-5 h-5" />
-              <span>Warn</span>
-            </button>
-          )}
+      <nav className="fixed bottom-0 w-full border-t border-[var(--cs-border)] bg-[var(--cs-surface)] z-40">
+        <div className="max-w-sm mx-auto flex justify-around items-center py-3">
+          {tabs.map(({ id, label, Icon }) => {
+            const active = activeTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex flex-col items-center gap-1.5 px-4 transition-colors text-[10px] font-bold uppercase tracking-[0.18em] ${
+                  active
+                    ? 'text-[var(--cs-teal-bright)]'
+                    : 'text-[var(--cs-muted)] hover:text-[var(--cs-text)]'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
     </div>
