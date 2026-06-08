@@ -61,9 +61,9 @@ export default function ReportTab() {
     );
   };
 
-  const idleClasses   = 'bg-[var(--cs-red)]/10 border-[var(--cs-red)] text-[var(--cs-red-bright)] hover:bg-[var(--cs-red)]/20';
-  const locatingClasses = 'bg-[var(--cs-surface-alt)] border-[var(--cs-muted)] text-[var(--cs-muted)]';
-  const sentClasses   = 'bg-[var(--cs-teal)]/10 border-[var(--cs-teal)] text-[var(--cs-teal-bright)]';
+  const idleClasses   = 'bg-[var(--cs-surface-alt)] border-[var(--cs-border)] text-[var(--cs-red-bright)] hover:border-[var(--cs-red)]/50 hover:bg-[var(--cs-red)]/5';
+  const locatingClasses = 'bg-[var(--cs-surface-alt)] border-[var(--cs-border)] text-[var(--cs-muted)]';
+  const sentClasses   = 'bg-[var(--cs-surface-alt)] border-[var(--cs-teal)]/45 text-[var(--cs-teal-bright)]';
 
   return (
     <div className="flex flex-col items-center justify-center py-10 space-y-8">
@@ -110,7 +110,7 @@ export default function ReportTab() {
         <button
           onClick={triggerSOS}
           disabled={status !== 'idle'}
-          className={`relative z-10 flex flex-col items-center justify-center w-full py-10 border-2 transition-all cursor-pointer disabled:cursor-not-allowed ${
+          className={`relative z-10 flex flex-col items-center justify-center w-full py-10 border transition-all cursor-pointer disabled:cursor-not-allowed ${
             status === 'idle' ? idleClasses : status === 'locating' ? locatingClasses : sentClasses
           }`}
         >

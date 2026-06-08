@@ -42,8 +42,8 @@ export default function MapComponent({ alerts = [] }: { alerts: any[] }) {
   const defaultCenter: [number, number] = [9.5333, 6.4499];
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl relative z-0">
-      <MapContainer center={defaultCenter} zoom={14} style={{ height: '400px', width: '100%' }}>
+    <div className="rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl relative z-0 h-full min-h-[380px]">
+      <MapContainer center={defaultCenter} zoom={14} style={{ height: '100%', minHeight: '380px', width: '100%' }}>
         <TileLayer 
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'

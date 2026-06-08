@@ -46,7 +46,7 @@ export default function WarnTab() {
 
       <div className="cs-panel p-8 space-y-6">
         {/* Warning banner */}
-        <div className="border border-[var(--cs-red)]/50 bg-[var(--cs-red)]/8 p-4 flex gap-3 text-[var(--cs-red-bright)]">
+        <div className="border border-[var(--cs-border)] bg-[var(--cs-surface-alt)] p-4 flex gap-3 text-[var(--cs-red-bright)]">
           <AlertOctagon className="w-5 h-5 shrink-0 mt-0.5" />
           <p className="text-xs font-mono uppercase tracking-widest leading-relaxed">
             This executes an immediate WhatsApp broadcast to all registered student nodes on campus. Use only for confirmed emergencies.

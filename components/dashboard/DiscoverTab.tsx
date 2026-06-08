@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
 import DynamicMap from './DynamicMap';
 
 export default function DiscoverTab() {
@@ -73,32 +74,37 @@ export default function DiscoverTab() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-px bg-[var(--cs-border)] sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {alerts.map((alert, i) => (
-              <motion.div
+              <Link
                 key={alert._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-[var(--cs-bg)] hover:bg-[var(--cs-surface)] transition-colors p-5 flex items-start gap-4 border-l-2 border-l-[var(--cs-red)]"
+                href={`/track/${alert.trackToken}`}
+                className="block"
               >
-                <div className="bg-[var(--cs-red)]/10 p-2 border border-[var(--cs-red)]/30 shrink-0">
-                  <AlertTriangle className="w-4 h-4 text-[var(--cs-red-bright)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <h4 className="font-bold text-[var(--cs-text)] text-sm truncate">{alert.type}</h4>
-                    <span className="shrink-0 flex items-center gap-1 text-[10px] text-[var(--cs-muted)] font-mono border border-[var(--cs-border)] px-1.5 py-0.5">
-                      <Clock className="w-2.5 h-2.5" />
-                      {new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                  className="cs-panel p-5 flex items-start gap-4 hover:border-[var(--cs-teal)] transition-colors duration-200 h-full"
+                >
+                  <div className="bg-[var(--cs-surface-alt)] p-2 border border-[var(--cs-border)] shrink-0">
+                    <AlertTriangle className="w-4 h-4 text-[var(--cs-red-bright)]" />
                   </div>
-                  <div className="mt-2 space-y-1 text-[11px] font-mono text-[var(--cs-muted)]">
-                    <p>target: <span className="text-[var(--cs-text)]">{alert.studentId?.name || 'UNKNOWN'}</span></p>
-                    <p>status: <span className="text-[var(--cs-red-bright)] animate-pulse">CRITICAL</span></p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-bold text-[var(--cs-text)] text-sm truncate">{alert.type}</h4>
+                      <span className="shrink-0 flex items-center gap-1 text-[10px] text-[var(--cs-muted)] font-mono border border-[var(--cs-border)] px-1.5 py-0.5 bg-[var(--cs-surface)]">
+                        <Clock className="w-2.5 h-2.5" />
+                        {new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <div className="mt-2 space-y-1 text-[11px] font-mono text-[var(--cs-muted)]">
+                      <p>target: <span className="text-[var(--cs-text)]">{alert.studentId?.name || 'UNKNOWN'}</span></p>
+                      <p>status: <span className="text-[var(--cs-red-bright)] font-bold">CRITICAL</span></p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         )}
