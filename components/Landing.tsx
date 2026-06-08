@@ -385,7 +385,7 @@ export default function Landing() {
 
         {/* Mobile Dropdown */}
         {showMobileMenu && (
-          <div className="sm:hidden border-t border-[var(--cs-border)] bg-[var(--cs-bg)] p-4 flex flex-col gap-4 text-xs font-bold uppercase tracking-widest">
+          <div className="sm:hidden absolute top-full left-0 w-full border-t border-b border-[var(--cs-border)] bg-[var(--cs-bg)]/95 backdrop-blur-md p-4 flex flex-col gap-4 text-xs font-bold uppercase tracking-widest shadow-2xl">
             <a href="#features" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">Features</a>
             <a href="#how-it-works" onClick={() => setShowMobileMenu(false)} className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] p-2">How it works</a>
             <div className="flex flex-col gap-3 mt-2 border-t border-[var(--cs-border)] pt-4">
