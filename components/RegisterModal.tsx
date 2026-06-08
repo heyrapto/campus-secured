@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Plus, Trash2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
 export default function RegisterModal({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '', studentId: '', email: '', password: '', whatsapp: ''
   });
@@ -31,6 +32,20 @@ export default function RegisterModal({ onClose }: { onClose: () => void }) {
 
   const removeContact = (index: number) => {
     setContacts(contacts.filter((_, i) => i !== index));
+  };
+
+  const nextStep = () => {
+    setError('');
+    if (!formData.name || !formData.studentId || !formData.email || !formData.password || !formData.whatsapp) {
+      setError('Please fill in all fields before continuing.');
+      return;
+    }
+    setStep(2);
+  };
+
+  const prevStep = () => {
+    setError('');
+    setStep(1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,167 +86,227 @@ export default function RegisterModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 overflow-y-auto py-10">
+    /* Backdrop — scrollable container so content is always reachable */
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="cs-panel w-full max-w-2xl p-8 relative"
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        className="cs-panel w-full max-w-xl my-auto"
       >
-        {/* Header */}
-        <div className="flex justify-between items-center border-b border-[var(--cs-border)] pb-4 mb-6">
-          <h2
-            className="text-xl font-bold text-[var(--cs-text)]"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            NEW RECRUIT
-          </h2>
+        {/* ── Header ─────────────────────────────────────────── */}
+        <div className="flex justify-between items-start p-6 border-b border-[var(--cs-border)]">
+          <div className="space-y-1">
+            <h2
+              className="text-xl font-bold text-[var(--cs-text)]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              NEW RECRUIT
+            </h2>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--cs-teal)] font-mono">
+              Step {step} of 2 — {step === 1 ? 'Personal Info' : 'Emergency Contacts'}
+            </p>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-[var(--cs-muted)] hover:text-white transition-colors"
+            className="text-[var(--cs-muted)] hover:text-white transition-colors mt-1"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {error && (
-          <div className="border border-[var(--cs-red)] bg-[var(--cs-red)]/10 text-[var(--cs-red-bright)] p-3 mb-6 text-sm font-mono">
-            [ERROR] {error}
-          </div>
-        )}
+        {/* ── Progress bar ───────────────────────────────────── */}
+        <div className="h-0.5 bg-[var(--cs-border)]">
+          <motion.div
+            className="h-full bg-[var(--cs-teal)]"
+            animate={{ width: step === 1 ? '50%' : '100%' }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="cs-overline block mb-2">Full Name</label>
-              <input
-                required
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="cs-input"
-                placeholder="John Doe"
-              />
-            </div>
-            <div>
-              <label className="cs-overline block mb-2">Student ID</label>
-              <input
-                required
-                value={formData.studentId}
-                onChange={e => setFormData({ ...formData, studentId: e.target.value })}
-                className="cs-input"
-                placeholder="2018/1/XXXX"
-              />
-            </div>
-            <div>
-              <label className="cs-overline block mb-2">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                className="cs-input"
-                placeholder="you@futminna.edu.ng"
-              />
-            </div>
-            <div>
-              <label className="cs-overline block mb-2">Password</label>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={e => setFormData({ ...formData, password: e.target.value })}
-                className="cs-input"
-                placeholder="••••••••"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="cs-overline block mb-2">WhatsApp Number</label>
-              <input
-                required
-                value={formData.whatsapp}
-                onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
-                className="cs-input"
-                placeholder="2348XXXXXXXXX (international format)"
-              />
-              <p className="cs-overline mt-2 text-[var(--cs-teal)]">
-                Required for emergency broadcasts
-              </p>
-            </div>
-          </div>
+        {/* ── Error banner ───────────────────────────────────── */}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="border-b border-[var(--cs-red)] bg-[var(--cs-red)]/10 text-[var(--cs-red-bright)] px-6 py-3 text-sm font-mono overflow-hidden"
+            >
+              [ERR] {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          {/* Emergency Contacts */}
-          <div className="border-t border-[var(--cs-border)] pt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--cs-teal)]">
-                Emergency Contacts
-              </h3>
-              {contacts.length < 3 && (
-                <button
-                  type="button"
-                  onClick={addContact}
-                  className="text-[var(--cs-teal)] hover:text-[var(--cs-teal-bright)] text-xs uppercase tracking-widest flex items-center gap-1 transition-colors"
-                >
-                  <Plus className="w-3 h-3" /> Add Contact
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              {contacts.map((contact, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-[var(--cs-surface-alt)] border border-[var(--cs-border)] relative"
-                >
-                  {index > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => removeContact(index)}
-                      className="absolute top-2 right-2 text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input
-                      placeholder="Contact Name"
-                      required={index === 0}
-                      value={contact.name}
-                      onChange={e => handleContactChange(index, 'name', e.target.value)}
-                      className="cs-input py-2 text-sm"
-                    />
-                    <input
-                      placeholder="Phone Number"
-                      required={index === 0}
-                      value={contact.phone}
-                      onChange={e => handleContactChange(index, 'phone', e.target.value)}
-                      className="cs-input py-2 text-sm"
-                    />
-                    <input
-                      placeholder="WhatsApp (Optional)"
-                      value={contact.whatsapp}
-                      onChange={e => handleContactChange(index, 'whatsapp', e.target.value)}
-                      className="cs-input py-2 text-sm"
-                    />
-                    <input
-                      placeholder="Relationship (e.g. Parent)"
-                      value={contact.relationship}
-                      onChange={e => handleContactChange(index, 'relationship', e.target.value)}
-                      className="cs-input py-2 text-sm"
-                    />
-                  </div>
+        {/* ── Step content (no fixed height — grows naturally) ─ */}
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 12 }}
+              transition={{ duration: 0.2 }}
+              className="p-6 space-y-5"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="cs-overline block mb-2">Full Name</label>
+                  <input
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    className="cs-input"
+                    placeholder="John Doe"
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
+                <div>
+                  <label className="cs-overline block mb-2">Student ID</label>
+                  <input
+                    value={formData.studentId}
+                    onChange={e => setFormData({ ...formData, studentId: e.target.value })}
+                    className="cs-input"
+                    placeholder="2018/1/XXXX"
+                  />
+                </div>
+                <div>
+                  <label className="cs-overline block mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    className="cs-input"
+                    placeholder="you@futminna.edu.ng"
+                  />
+                </div>
+                <div>
+                  <label className="cs-overline block mb-2">Password</label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={e => setFormData({ ...formData, password: e.target.value })}
+                    className="cs-input"
+                    placeholder="••••••••"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="cs-overline block mb-2">WhatsApp Number</label>
+                  <input
+                    value={formData.whatsapp}
+                    onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
+                    className="cs-input"
+                    placeholder="2348XXXXXXXXX (international format)"
+                  />
+                  <p className="cs-overline mt-2 text-[var(--cs-teal)]">Required for emergency broadcasts</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
+          {step === 2 && (
+            <motion.form
+              key="step2"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ duration: 0.2 }}
+              onSubmit={handleSubmit}
+              className="p-6 space-y-5"
+            >
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-[var(--cs-muted)]">
+                  Who should we notify when you trigger an SOS? <span className="text-[var(--cs-text)]">At least one required.</span>
+                </p>
+                {contacts.length < 3 && (
+                  <button
+                    type="button"
+                    onClick={addContact}
+                    className="text-[var(--cs-teal)] hover:text-[var(--cs-teal-bright)] text-xs uppercase tracking-widest flex items-center gap-1 transition-colors shrink-0 ml-4"
+                  >
+                    <Plus className="w-3 h-3" /> Add
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                {contacts.map((contact, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-[var(--cs-surface-alt)] border border-[var(--cs-border)] relative"
+                  >
+                    {index > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => removeContact(index)}
+                        className="absolute top-2 right-2 text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <input
+                        placeholder="Contact Name"
+                        required={index === 0}
+                        value={contact.name}
+                        onChange={e => handleContactChange(index, 'name', e.target.value)}
+                        className="cs-input py-2 text-sm"
+                      />
+                      <input
+                        placeholder="Phone Number"
+                        required={index === 0}
+                        value={contact.phone}
+                        onChange={e => handleContactChange(index, 'phone', e.target.value)}
+                        className="cs-input py-2 text-sm"
+                      />
+                      <input
+                        placeholder="WhatsApp (Optional)"
+                        value={contact.whatsapp}
+                        onChange={e => handleContactChange(index, 'whatsapp', e.target.value)}
+                        className="cs-input py-2 text-sm"
+                      />
+                      <input
+                        placeholder="Relationship (e.g. Parent)"
+                        value={contact.relationship}
+                        onChange={e => handleContactChange(index, 'relationship', e.target.value)}
+                        className="cs-input py-2 text-sm"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Hidden submit to allow Enter key submission */}
+              <button type="submit" className="hidden" />
+            </motion.form>
+          )}
+        </AnimatePresence>
+
+        {/* ── Footer ─────────────────────────────────────────── */}
+        <div className="flex justify-between items-center gap-4 p-6 border-t border-[var(--cs-border)]">
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full cs-btn-primary mt-4"
+            type="button"
+            onClick={prevStep}
+            className={`cs-btn-ghost px-4 ${step === 1 ? 'invisible pointer-events-none' : ''}`}
           >
-            {loading ? 'INITIALIZING...' : 'CREATE ACCOUNT'}
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </button>
-        </form>
+
+          {step === 1 ? (
+            <button type="button" onClick={nextStep} className="cs-btn-primary">
+              Continue <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              form="step2-form"
+              onClick={handleSubmit as any}
+              disabled={loading}
+              className="cs-btn-primary"
+            >
+              {loading ? 'INITIALIZING...' : 'CREATE ACCOUNT'}
+            </button>
+          )}
+        </div>
       </motion.div>
     </div>
   );
