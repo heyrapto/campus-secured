@@ -403,22 +403,21 @@ export default function Landing() {
         {/* Mobile dropdown */}
         {showMobileMenu && (
           <div className="md:hidden absolute top-full left-0 w-full bg-[var(--cs-bg)] border-b border-[var(--cs-border)] shadow-xl z-50">
-            <div className="cs-container py-6 flex flex-col gap-4">
+            <div className="cs-container py-4 flex flex-col gap-1">
               <a
                 href="#features"
                 onClick={() => setShowMobileMenu(false)}
-                className="text-base font-medium text-[var(--cs-muted)] hover:text-[var(--cs-text)] transition-colors"
+                className="text-sm font-light text-[var(--cs-muted)] hover:text-[var(--cs-text)] py-3 border-b border-[var(--cs-border)] transition-colors"
               >
                 Features
               </a>
               <a
                 href="#how-it-works"
                 onClick={() => setShowMobileMenu(false)}
-                className="text-base font-medium text-[var(--cs-muted)] hover:text-[var(--cs-text)] transition-colors"
+                className="text-sm font-light text-[var(--cs-muted)] hover:text-[var(--cs-text)] py-3 border-b border-[var(--cs-border)] transition-colors"
               >
                 How it works
               </a>
-              <div className="h-px w-full bg-[var(--cs-border)] my-2" />
               <div className="flex flex-col gap-3 pt-4">
                 <button
                   onClick={() => { setShowLogin(true); setShowMobileMenu(false); }}

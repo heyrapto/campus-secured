@@ -8,6 +8,8 @@ export interface IStudent extends Document {
   campusId: string;
   role: 'student' | 'guard' | 'admin';
   whatsapp?: string;
+  falseAlarms: number;
+  status: 'active' | 'suspended';
   createdAt: Date;
 }
 
@@ -19,6 +21,8 @@ const StudentSchema: Schema = new Schema({
   campusId:   { type: String, default: 'futminna' },
   role:       { type: String, enum: ['student', 'guard', 'admin'], default: 'student' },
   whatsapp:   { type: String },
+  falseAlarms:{ type: Number, default: 0 },
+  status:     { type: String, enum: ['active', 'suspended'], default: 'active' },
   createdAt:  { type: Date, default: Date.now }
 });
 

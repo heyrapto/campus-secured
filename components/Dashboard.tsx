@@ -15,6 +15,7 @@ import ReportTab from './dashboard/ReportTab';
 import DiscoverTab from './dashboard/DiscoverTab';
 import IncidentTab from './dashboard/IncidentTab';
 import WarnTab from './dashboard/WarnTab';
+import UsersTab from './dashboard/UsersTab';
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -28,7 +29,10 @@ export default function Dashboard() {
     { id: 'incident', label: 'Nearby', Icon: ShieldAlert },
     { id: 'discover', label: 'Feed', Icon: Map },
     ...(isAdminOrGuard
-      ? [{ id: 'warn', label: 'Broadcast', Icon: Bell }]
+      ? [
+          { id: 'warn', label: 'Broadcast', Icon: Bell },
+          { id: 'users', label: 'Users', Icon: Shield } // Added Users tab
+        ]
       : []),
   ];
 
@@ -80,6 +84,7 @@ export default function Dashboard() {
         {activeTab === 'incident' && <IncidentTab />}
         {activeTab === 'discover' && <DiscoverTab />}
         {activeTab === 'warn' && isAdminOrGuard && <WarnTab />}
+        {activeTab === 'users' && isAdminOrGuard && <UsersTab />}
       </main>
 
       {/* Bottom Navigation */}

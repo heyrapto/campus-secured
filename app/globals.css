@@ -22,7 +22,7 @@
 html {
   background: var(--cs-bg);
   color: var(--cs-text);
-  scroll-behavior: smooth;
+  scroll-behavior: smooth !important;
 }
 
 body {
