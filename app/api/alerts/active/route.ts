@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { connectDB } from '@/lib/mongodb';
 import Alert from '@/models/Alert';
-import Student from '@/models/Student'; // ensures the ref resolves
 
 export const dynamic = 'force-dynamic';
 
