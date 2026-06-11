@@ -46,7 +46,6 @@ export default function Dashboard() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-[var(--cs-teal)]" />
-
             <span
               className="text-sm font-bold tracking-wide text-[var(--cs-text)]"
               style={{ fontFamily: 'var(--font-display)' }}

@@ -12,6 +12,7 @@
   --cs-teal-bright:  #7aeee7;
   --cs-red:          #e8365d;
   --cs-red-bright:   #ff6b8a;
+   --cs-accent: #4fb8b2;
 }
 
 @theme inline {
@@ -80,10 +81,6 @@ button, input, select, textarea { font: inherit; }
     text-transform: uppercase;
     transition: background 0.2s, box-shadow 0.2s;
     cursor: pointer;
-  }
-  .cs-btn-primary:hover:not(:disabled) {
-    background: rgba(59, 191, 184, 0.24);
-    box-shadow: 0 0 18px rgba(59, 191, 184, 0.28);
   }
   .cs-btn-primary:disabled {
     opacity: 0.45;

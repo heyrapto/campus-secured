@@ -91,15 +91,16 @@ function Ticker() {
   );
 }
 
-function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin: () => void }) {
+function HeroSection({ onRegister }: { onRegister: () => void; onLogin: () => void }) {
   return (
     <section className="cs-container py-24 grid md:grid-cols-2 gap-16 items-center">
+      
       {/* Left copy */}
       <div className="space-y-8">
         <div className="cs-accent-label">Campus Emergency Response System</div>
 
         <h2
-          className="text-5xl md:text-[4.5rem] leading-[1.06] font-extrabold text-[var(--cs-text)]"
+          className="text-[clamp(2.4rem,4.5vw,4.1rem)] max-sm:text-[clamp(2.25rem,10vw,3.25rem)] leading-[1.06] font-extrabold text-[var(--cs-text)]"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           Protect your campus.
@@ -107,18 +108,13 @@ function HeroSection({ onRegister, onLogin }: { onRegister: () => void; onLogin:
           <span style={{ color: 'var(--cs-teal)' }}>In seconds.</span>
         </h2>
 
-        <div className="border-l-2 border-[var(--cs-border)] pl-5 space-y-3">
-          <p className="text-lg text-[var(--cs-muted)] leading-relaxed max-w-md">
+          <p className="mt-8 max-w-[620px] font-mono text-[0.95rem] leading-[1.8] text-[var(--cs-muted)] max-sm:text-[0.86rem]">
             Trigger SOS alerts, share live GPS, notify emergency contacts, and receive campus-wide broadcasts — all from one app.
           </p>
-        </div>
 
         <div className="flex flex-wrap gap-4 pt-2">
           <button onClick={onRegister} className="cs-btn-primary">
             Get Started <ArrowRight className="w-4 h-4" />
-          </button>
-          <button onClick={onLogin} className="cs-btn-ghost">
-            Log In
           </button>
         </div>
       </div>
