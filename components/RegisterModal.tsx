@@ -101,7 +101,7 @@ export default function RegisterModal({ onClose }: { onClose: () => void }) {
               className="text-xl font-bold text-[var(--cs-text)]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              NEW RECRUIT
+              NEW USER
             </h2>
             <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--cs-teal)] font-mono">
               Step {step} of 2 — {step === 1 ? 'Personal Info' : 'Emergency Contacts'}

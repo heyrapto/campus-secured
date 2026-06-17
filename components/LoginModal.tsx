@@ -42,7 +42,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             className="text-xl font-bold text-[var(--cs-text)]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            AUTH SYSTEM
+            Login
           </h2>
           <button
             onClick={onClose}
@@ -71,7 +71,7 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="cs-overline block mb-2">Access Key</label>
+            <label className="cs-overline block mb-2">Password</label>
             <input
               type="password"
               required
