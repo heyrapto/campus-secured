@@ -133,8 +133,8 @@ export default function LoginPage() {
               }}
               onBlur={() => handleBlur('email')}
               isTouched={touched.email}
-              error={touched.email ? emailValidation.message : undefined}
-              successMessage={emailValidation.isCampus ? 'Verified institutional email' : 'Valid email format'}
+              isValid={emailValidation.isValid}
+              error={touched.email ? emailValidation.error : undefined}
               placeholder="student@futminna.edu.ng"
               hint="Enter your registered campus or personal email"
             />
@@ -152,8 +152,8 @@ export default function LoginPage() {
               }}
               onBlur={() => handleBlur('password')}
               isTouched={touched.password}
-              error={touched.password ? passwordValidation.message : undefined}
-              successMessage={password.length >= 6 ? 'Password entered' : undefined}
+              isValid={passwordValidation.isValid}
+              error={touched.password ? passwordValidation.error : undefined}
               placeholder="••••••••"
             />
 

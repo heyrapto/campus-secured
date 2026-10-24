@@ -7,7 +7,7 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   id: string;
   error?: string;
-  successMessage?: string;
+  isValid?: boolean;
   isTouched?: boolean;
   isPassword?: boolean;
   hint?: string;
@@ -18,7 +18,7 @@ export default function AuthInput({
   label,
   id,
   error,
-  successMessage,
+  isValid = false,
   isTouched = false,
   isPassword = false,
   hint,
@@ -31,17 +31,18 @@ export default function AuthInput({
 }: AuthInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
+  const hasValue = String(value || '').trim().length > 0;
   const hasError = Boolean(isTouched && error);
-  const isSuccess = Boolean(isTouched && !error && value && successMessage);
+  const isSuccess = Boolean(!hasError && isValid && hasValue);
 
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
   // Border & background classes based on validation state
   let borderClass = 'border-[var(--cs-border)] focus:border-[var(--cs-teal)]';
   if (hasError) {
-    borderClass = 'border-[var(--cs-red)] focus:border-[var(--cs-red)] bg-[var(--cs-red)]/[0.04]';
+    borderClass = 'border-[var(--cs-red)] focus:border-[var(--cs-red)] bg-[var(--cs-red)]/[0.04] text-[var(--cs-text)]';
   } else if (isSuccess) {
-    borderClass = 'border-[var(--cs-teal)]/60 focus:border-[var(--cs-teal)] bg-[var(--cs-teal)]/[0.03]';
+    borderClass = 'border-[var(--cs-green)] focus:border-[var(--cs-green-bright)] bg-[var(--cs-green)]/[0.03] text-[var(--cs-text)]';
   }
 
   return (
@@ -60,36 +61,36 @@ export default function AuthInput({
           value={value}
           required={required}
           aria-invalid={hasError ? 'true' : 'false'}
-          aria-describedby={hasError ? `${id}-error` : isSuccess ? `${id}-success` : hint ? `${id}-hint` : undefined}
-          className={`cs-input pr-10 font-mono text-sm transition-colors duration-150 ${borderClass} ${className}`}
+          aria-describedby={hasError ? `${id}-error` : hint ? `${id}-hint` : undefined}
+          className={`cs-input ${isPassword ? 'pr-20' : 'pr-10'} font-mono text-sm transition-colors duration-150 ${borderClass} ${className}`}
           {...props}
         />
 
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-auto">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-auto">
+          {hasError && (
+            <AlertCircle className="w-4 h-4 text-[var(--cs-red-bright)] shrink-0" />
+          )}
+
+          {isSuccess && (
+            <Check className="w-4 h-4 text-[var(--cs-green-bright)] shrink-0" />
+          )}
+
           {isPassword && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-[var(--cs-muted)] hover:text-[var(--cs-teal)] transition-colors p-1"
+              className="text-[var(--cs-muted)] hover:text-[var(--cs-text)] transition-colors p-1"
               tabIndex={-1}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           )}
-
-          {!isPassword && hasError && (
-            <AlertCircle className="w-4 h-4 text-[var(--cs-red-bright)] shrink-0" />
-          )}
-
-          {!isPassword && isSuccess && (
-            <Check className="w-4 h-4 text-[var(--cs-teal)] shrink-0" />
-          )}
         </div>
       </div>
 
-      {/* Realtime validation feedback */}
-      {hasError && (
+      {/* Realtime validation feedback: only shows error when invalid. When valid, disappears cleanly. */}
+      {hasError ? (
         <p
           id={`${id}-error`}
           className="flex items-center gap-1.5 text-xs font-mono text-[var(--cs-red-bright)] pt-0.5"
@@ -98,23 +99,11 @@ export default function AuthInput({
           <span className="font-bold text-[10px] tracking-wider uppercase">[!]</span>
           <span>{error}</span>
         </p>
-      )}
-
-      {!hasError && isSuccess && (
-        <p
-          id={`${id}-success`}
-          className="flex items-center gap-1.5 text-xs font-mono text-[var(--cs-teal)] pt-0.5"
-        >
-          <span className="font-bold text-[10px] tracking-wider uppercase">[✓]</span>
-          <span>{successMessage}</span>
-        </p>
-      )}
-
-      {!hasError && !isSuccess && hint && (
+      ) : hint ? (
         <p id={`${id}-hint`} className="text-[10px] font-mono text-[var(--cs-muted)] pt-0.5">
           {hint}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

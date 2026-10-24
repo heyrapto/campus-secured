@@ -137,7 +137,6 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Mark step 2 fields as touched
     setContactsTouched(
       contacts.map(() => ({ name: true, phone: true, whatsapp: true }))
     );
@@ -211,7 +210,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
           <button
             type="button"
             onClick={onClose}
-            className="text-[var(--cs-muted)] hover:text-white transition-colors p-1"
+            className="text-[var(--cs-muted)] hover:text-white transition-colors p-1 cursor-pointer"
             aria-label="Close registration dialog"
           >
             <X className="w-5 h-5" />
@@ -267,8 +266,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                   }}
                   onBlur={() => handleBlur('name')}
                   isTouched={touched.name}
-                  error={touched.name ? nameValidation.message : undefined}
-                  successMessage={nameValidation.message}
+                  isValid={nameValidation.isValid}
+                  error={touched.name ? nameValidation.error : undefined}
                 />
 
                 {/* Student ID */}
@@ -284,8 +283,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                   }}
                   onBlur={() => handleBlur('studentId')}
                   isTouched={touched.studentId}
-                  error={touched.studentId ? studentIdValidation.message : undefined}
-                  successMessage={studentIdValidation.message}
+                  isValid={studentIdValidation.isValid}
+                  error={touched.studentId ? studentIdValidation.error : undefined}
                   hint="Format: YYYY/X/XXXX (e.g. 2021/1/74921MS)"
                 />
 
@@ -303,8 +302,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                   }}
                   onBlur={() => handleBlur('email')}
                   isTouched={touched.email}
-                  error={touched.email ? emailValidation.message : undefined}
-                  successMessage={emailValidation.isCampus ? 'Verified institutional email' : 'Valid email format'}
+                  isValid={emailValidation.isValid}
+                  error={touched.email ? emailValidation.error : undefined}
                 />
 
                 {/* WhatsApp Number */}
@@ -321,8 +320,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                   }}
                   onBlur={() => handleBlur('whatsapp')}
                   isTouched={touched.whatsapp}
-                  error={touched.whatsapp ? whatsappValidation.message : undefined}
-                  successMessage={whatsappValidation.message}
+                  isValid={whatsappValidation.isValid}
+                  error={touched.whatsapp ? whatsappValidation.error : undefined}
                   hint="International format without '+' (e.g. 2348012345678)"
                 />
 
@@ -341,8 +340,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                     }}
                     onBlur={() => handleBlur('password')}
                     isTouched={touched.password}
-                    error={touched.password ? passwordValidation.message : undefined}
-                    successMessage={passwordValidation.isValid ? 'Security criteria met' : undefined}
+                    isValid={passwordValidation.isValid}
+                    error={touched.password ? passwordValidation.error : undefined}
                   />
 
                   {/* Realtime Password Strength & Criteria Checklist */}
@@ -380,7 +379,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                   <button
                     type="button"
                     onClick={addContact}
-                    className="text-[var(--cs-teal)] hover:text-[var(--cs-teal-bright)] text-xs uppercase tracking-widest flex items-center gap-1 transition-colors shrink-0 ml-4 font-mono font-bold"
+                    className="text-[var(--cs-teal)] hover:text-[var(--cs-teal-bright)] text-xs uppercase tracking-widest flex items-center gap-1 transition-colors shrink-0 ml-4 font-mono font-bold cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" /> Add
                   </button>
@@ -408,7 +407,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                           <button
                             type="button"
                             onClick={() => removeContact(index)}
-                            className="text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors p-1"
+                            className="text-[var(--cs-muted)] hover:text-[var(--cs-red-bright)] transition-colors p-1 cursor-pointer"
                             aria-label={`Remove contact ${index + 1}`}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -425,8 +424,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                           onChange={(e) => handleContactChange(index, 'name', e.target.value)}
                           onBlur={() => handleContactBlur(index, 'name')}
                           isTouched={cTouched.name}
-                          error={cTouched.name ? cNameVal.message : undefined}
-                          successMessage={cNameVal.isValid && contact.name ? 'Valid' : undefined}
+                          isValid={cNameVal.isValid}
+                          error={cTouched.name ? cNameVal.error : undefined}
                           placeholder="e.g. Dr. Bello (Parent)"
                           className="py-2 text-sm"
                         />
@@ -440,8 +439,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                           onChange={(e) => handleContactChange(index, 'phone', e.target.value)}
                           onBlur={() => handleContactBlur(index, 'phone')}
                           isTouched={cTouched.phone}
-                          error={cTouched.phone ? cPhoneVal.message : undefined}
-                          successMessage={cPhoneVal.isValid && contact.phone ? 'Valid' : undefined}
+                          isValid={cPhoneVal.isValid}
+                          error={cTouched.phone ? cPhoneVal.error : undefined}
                           placeholder="08012345678"
                           className="py-2 text-sm"
                         />
@@ -454,7 +453,8 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                           onChange={(e) => handleContactChange(index, 'whatsapp', e.target.value)}
                           onBlur={() => handleContactBlur(index, 'whatsapp')}
                           isTouched={cTouched.whatsapp}
-                          error={cTouched.whatsapp && contact.whatsapp ? cWaVal.message : undefined}
+                          isValid={cWaVal.isValid}
+                          error={cTouched.whatsapp && contact.whatsapp ? cWaVal.error : undefined}
                           placeholder="2348XXXXXXXXX"
                           className="py-2 text-sm"
                         />
@@ -473,7 +473,6 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
                 })}
               </div>
 
-              {/* Hidden submit to allow Enter key submission */}
               <button type="submit" className="hidden" />
             </motion.form>
           )}
@@ -484,7 +483,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }: RegisterModa
           <button
             type="button"
             onClick={prevStep}
-            className={`cs-btn-ghost px-4 ${step === 1 ? 'invisible pointer-events-none' : ''}`}
+            className={`cs-btn-ghost px-4 cursor-pointer ${step === 1 ? 'invisible pointer-events-none' : ''}`}
           >
             <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </button>

@@ -281,8 +281,8 @@ export default function RegisterPage() {
                     }}
                     onBlur={() => handleBlur('name')}
                     isTouched={touched.name}
-                    error={touched.name ? nameValidation.message : undefined}
-                    successMessage={nameValidation.message}
+                    isValid={nameValidation.isValid}
+                    error={touched.name ? nameValidation.error : undefined}
                   />
 
                   <AuthInput
@@ -297,8 +297,8 @@ export default function RegisterPage() {
                     }}
                     onBlur={() => handleBlur('studentId')}
                     isTouched={touched.studentId}
-                    error={touched.studentId ? studentIdValidation.message : undefined}
-                    successMessage={studentIdValidation.message}
+                    isValid={studentIdValidation.isValid}
+                    error={touched.studentId ? studentIdValidation.error : undefined}
                     hint="Format: YYYY/X/XXXX (e.g. 2021/1/74921MS)"
                   />
 
@@ -315,8 +315,8 @@ export default function RegisterPage() {
                     }}
                     onBlur={() => handleBlur('email')}
                     isTouched={touched.email}
-                    error={touched.email ? emailValidation.message : undefined}
-                    successMessage={emailValidation.isCampus ? 'Verified institutional email' : 'Valid email format'}
+                    isValid={emailValidation.isValid}
+                    error={touched.email ? emailValidation.error : undefined}
                   />
 
                   <AuthInput
@@ -332,8 +332,8 @@ export default function RegisterPage() {
                     }}
                     onBlur={() => handleBlur('whatsapp')}
                     isTouched={touched.whatsapp}
-                    error={touched.whatsapp ? whatsappValidation.message : undefined}
-                    successMessage={whatsappValidation.message}
+                    isValid={whatsappValidation.isValid}
+                    error={touched.whatsapp ? whatsappValidation.error : undefined}
                     hint="International format without '+' (e.g. 2348012345678)"
                   />
 
@@ -351,8 +351,8 @@ export default function RegisterPage() {
                       }}
                       onBlur={() => handleBlur('password')}
                       isTouched={touched.password}
-                      error={touched.password ? passwordValidation.message : undefined}
-                      successMessage={passwordValidation.isValid ? 'Security criteria met' : undefined}
+                      isValid={passwordValidation.isValid}
+                      error={touched.password ? passwordValidation.error : undefined}
                     />
 
                     <PasswordStrengthIndicator
@@ -434,8 +434,8 @@ export default function RegisterPage() {
                             onChange={(e) => handleContactChange(index, 'name', e.target.value)}
                             onBlur={() => handleContactBlur(index, 'name')}
                             isTouched={cTouched.name}
-                            error={cTouched.name ? cNameVal.message : undefined}
-                            successMessage={cNameVal.isValid && contact.name ? 'Valid' : undefined}
+                            isValid={cNameVal.isValid}
+                            error={cTouched.name ? cNameVal.error : undefined}
                             placeholder="e.g. Dr. Bello (Parent)"
                             className="py-2 text-sm"
                           />
@@ -449,8 +449,8 @@ export default function RegisterPage() {
                             onChange={(e) => handleContactChange(index, 'phone', e.target.value)}
                             onBlur={() => handleContactBlur(index, 'phone')}
                             isTouched={cTouched.phone}
-                            error={cTouched.phone ? cPhoneVal.message : undefined}
-                            successMessage={cPhoneVal.isValid && contact.phone ? 'Valid' : undefined}
+                            isValid={cPhoneVal.isValid}
+                            error={cTouched.phone ? cPhoneVal.error : undefined}
                             placeholder="08012345678"
                             className="py-2 text-sm"
                           />
@@ -463,7 +463,8 @@ export default function RegisterPage() {
                             onChange={(e) => handleContactChange(index, 'whatsapp', e.target.value)}
                             onBlur={() => handleContactBlur(index, 'whatsapp')}
                             isTouched={cTouched.whatsapp}
-                            error={cTouched.whatsapp && contact.whatsapp ? cWaVal.message : undefined}
+                            isValid={cWaVal.isValid}
+                            error={cTouched.whatsapp && contact.whatsapp ? cWaVal.error : undefined}
                             placeholder="2348XXXXXXXXX"
                             className="py-2 text-sm"
                           />

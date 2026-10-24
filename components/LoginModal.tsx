@@ -88,7 +88,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }: LoginModalPr
           </div>
           <button
             onClick={onClose}
-            className="text-[var(--cs-muted)] hover:text-white transition-colors p-1"
+            className="text-[var(--cs-muted)] hover:text-white transition-colors p-1 cursor-pointer"
             aria-label="Close login dialog"
           >
             <X className="w-5 h-5" />
@@ -118,8 +118,8 @@ export default function LoginModal({ onClose, onSwitchToRegister }: LoginModalPr
             }}
             onBlur={() => handleBlur('email')}
             isTouched={touched.email}
-            error={touched.email ? emailValidation.message : undefined}
-            successMessage={emailValidation.isCampus ? 'Verified institutional email' : 'Valid email format'}
+            isValid={emailValidation.isValid}
+            error={touched.email ? emailValidation.error : undefined}
             placeholder="student@futminna.edu.ng"
             hint="Enter your registered campus or personal email"
           />
@@ -138,8 +138,8 @@ export default function LoginModal({ onClose, onSwitchToRegister }: LoginModalPr
             }}
             onBlur={() => handleBlur('password')}
             isTouched={touched.password}
-            error={touched.password ? passwordValidation.message : undefined}
-            successMessage={password.length >= 6 ? 'Password entered' : undefined}
+            isValid={passwordValidation.isValid}
+            error={touched.password ? passwordValidation.error : undefined}
             placeholder="••••••••"
           />
 
