@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import Link from 'next/link';
+import { AnimatePresence } from 'framer-motion';
 import {
   Shield,
   MessageCircle,
@@ -171,7 +172,7 @@ function FeaturesSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[var(--cs-border)]">
-          {FEATURES.map(({ icon: Icon, label, desc }, i) => (
+          {FEATURES.map(({ icon: Icon, label, desc }) => (
             <div
               key={label}
               className="bg-[var(--cs-bg)] p-7 space-y-4"
@@ -209,7 +210,7 @@ function HowItWorksSection() {
 
         {/* Right steps */}
         <div className="space-y-0 divide-y divide-[var(--cs-border)]">
-          {STEPS.map(({ num, title, desc }, i) => (
+          {STEPS.map(({ num, title, desc }) => (
             <div
               key={num}
               className="flex gap-6 py-8"
@@ -279,7 +280,7 @@ function CTASection({ onRegister }: { onRegister: () => void }) {
   );
 }
 
-function Footer() {
+function Footer({ onLogin, onRegister }: { onLogin: () => void; onRegister: () => void }) {
   return (
     <footer className="border-t border-[var(--cs-border)] bg-[var(--cs-surface)]/40">
       <div className="cs-container py-10">
@@ -312,8 +313,8 @@ function Footer() {
             <div className="space-y-3">
               <p className="cs-overline">Access</p>
               <ul className="space-y-2 text-[var(--cs-muted)]">
-                <li><button className="hover:text-[var(--cs-teal)] transition-colors">Student Login</button></li>
-                <li><button className="hover:text-[var(--cs-teal)] transition-colors">Register</button></li>
+                <li><button onClick={onLogin} className="hover:text-[var(--cs-teal)] transition-colors cursor-pointer">Student Login</button></li>
+                <li><button onClick={onRegister} className="hover:text-[var(--cs-teal)] transition-colors cursor-pointer">Register</button></li>
               </ul>
             </div>
             <div className="space-y-3">
@@ -352,7 +353,7 @@ export default function Landing() {
         <div className="cs-container flex justify-between items-center">
 
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-full bg-[var(--cs-teal)]/10 flex items-center justify-center group-hover:bg-[var(--cs-teal)]/20 transition-all duration-300 ease-out">
               <Shield className="w-4 h-4 text-[var(--cs-teal)]" />
             </div>
@@ -362,7 +363,7 @@ export default function Landing() {
             >
               Campus Shield
             </span>
-          </a>
+          </Link>
 
           {/* Desktop nav links */}
           <nav className="hidden md:flex items-center gap-8">
@@ -442,12 +443,28 @@ export default function Landing() {
       <FeaturesSection />
       <HowItWorksSection />
       <CTASection onRegister={() => setShowRegister(true)} />
-      <Footer />
+      <Footer onLogin={() => setShowLogin(true)} onRegister={() => setShowRegister(true)} />
 
       {/* Modals */}
       <AnimatePresence>
-        {showLogin    && <LoginModal    onClose={() => setShowLogin(false)} />}
-        {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
+        {showLogin && (
+          <LoginModal
+            onClose={() => setShowLogin(false)}
+            onSwitchToRegister={() => {
+              setShowLogin(false);
+              setShowRegister(true);
+            }}
+          />
+        )}
+        {showRegister && (
+          <RegisterModal
+            onClose={() => setShowRegister(false)}
+            onSwitchToLogin={() => {
+              setShowRegister(false);
+              setShowLogin(true);
+            }}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
